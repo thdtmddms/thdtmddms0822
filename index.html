@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFPK Life-Cycle FinPlan | 디지털 WM 자산관리 센터</title>
+    <!-- Pretendard 한글 웹폰트 & FontAwesome 아이콘 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: #f4f6f9;
+            color: #1e293b;
+        }
+        .bank-gradient {
+            background: linear-gradient(135deg, #0a192f 0%, #112240 55%, #1e3a8a 100%);
+        }
+        .gold-badge {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-card {
+            transition: all 0.25s ease;
+            border: 1px solid #e2e8f0;
+            user-select: none;
+        }
+        .nav-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(30, 58, 138, 0.12);
+        }
+        .nav-card.active {
+            border-color: #1d4ed8;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
+        }
+        .nav-card.active .icon-box {
+            background-color: #1d4ed8;
+            color: #ffffff;
+        }
+        .nav-card.active .nav-title {
+            color: #1e3a8a;
+            font-weight: 700;
+        }
+        .input-box:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .preset-btn, .dict-filter-btn, .policy-filter-btn {
+            transition: all 0.2s ease;
+        }
+        .preset-btn.active, .dict-filter-btn.active, .policy-filter-btn.active {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            border-color: #1e3a8a;
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- 1. 최상단 은행 유틸리티 바 -->
+    <div class="bg-slate-900 text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-4">
+                <span class="text-amber-400 font-semibold"><i class="fa-solid fa-crown mr-1"></i>AFPK 공인재무설계 표준 시스템</span>
+                <span class="hidden sm:inline text-slate-500">|</span>
+                <span class="hidden sm:inline">개인금융 · WM자산관리 · 생애설계 시뮬레이션 · 금융정책 가이던스</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span><i class="fa-solid fa-chart-line text-emerald-400 mr-1"></i>기준금리 연 3.25%</span>
+                <span class="text-slate-600">|</span>
+                <span><i class="fa-solid fa-percent text-sky-400 mr-1"></i>주담대 평균 연 4.30%</span>
+                <span class="text-slate-600 hidden md:inline">|</span>
+                <button type="button" onclick="openTab(4)" class="hidden md:inline-block bg-blue-900/80 hover:bg-blue-800 text-sky-200 px-2.5 py-0.5 rounded border border-blue-700 transition cursor-pointer">
+                    <i class="fa-solid fa-book-open mr-1"></i>재무용어·비율 가이드
+                </button>
+                <button type="button" onclick="openTab(5)" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 px-2.5 py-0.5 rounded border border-emerald-700 transition cursor-pointer">
+                    <i class="fa-solid fa-landmark mr-1"></i>추천 금융정책·제도(STEP 06)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 메인 은행 헤더 & 모드 선택기 (수정사항 1: 직접 입력 & 공모전 케이스만 유지) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="openTab(0)">
+                <div class="w-11 h-11 rounded-xl bank-gradient flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl font-extrabold tracking-tight text-slate-900">AFPK FinPlan</span>
+                        <span class="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">WM 자산관리 센터</span>
+                    </div>
+                    <p class="text-xs text-slate-500">개개인의 고유한 재무 상황과 정책 제도를 연결하는 맞춤형 재무설계 플랫폼</p>
+                </div>
+            </div>
+
+            <!-- 우측: 직접 입력(초기화) 및 공모전 케이스 불러오기만 배치 -->
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold text-slate-400 mr-1 hidden sm:inline"><i class="fa-solid fa-sliders mr-1"></i>데이터 입력 모드:</span>
+                <button type="button" onclick="loadPreset('custom')" id="btn-preset-custom" class="preset-btn active text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold px-3.5 py-2 rounded-lg shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-pen-to-square mr-1.5"></i>직접 입력 모드 (초기화)
+                </button>
+                <button type="button" onclick="loadPreset('case2')" id="btn-preset-case2" class="preset-btn text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-3.5 py-2 rounded-lg shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-star text-amber-500 mr-1.5"></i>[공모전 케이스] 30대 맞벌이 신혼부부
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. 히어로 배너 & 6대 핵심 서비스 카드 네비게이션 -->
+    <section class="bank-gradient text-white pt-8 pb-16 px-4 sm:px-6 relative">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+                <div>
+                    <span class="inline-block gold-badge text-white text-xs font-bold px-3 py-1 rounded-full mb-3 shadow">
+                        AFPK 6단계 표준 프로세스 · 맞춤형 가구 설정 & 정부 정책 가이드 탑재
+                    </span>
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
+                        나의 고유한 가구 상황과 현금흐름을 입력하고<br class="sm:hidden" /> 맞춤형 재무·정책 솔루션을 확인하세요
+                    </h1>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl p-3.5 text-xs sm:text-sm flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-sky-400/20 text-sky-300 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-id-card-clip"></i>
+                    </div>
+                    <div>
+                        <div class="text-slate-300 text-xs">현재 진단 모드 및 가구 유형</div>
+                        <div id="active-profile-name" class="font-bold text-white">고객 직접 입력 모드 (나만의 재무 데이터 분석)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6대 서비스 퀵 메뉴 탭 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5 -mb-24 relative z-20">
+                <div onclick="openTab(0)" id="nav-card-0" class="nav-card active bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
+                    <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-semibold text-blue-600 mb-0.5">STEP 01 · 재무진단</div>
+                        <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">4대 재무건전성 진단</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">가구별 맞춤 기준·DSR·비상금 평가</p>
+                    </div>
+                </div>
+
+                <div onclick="openTab(1)" id="nav-card-1" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
+                    <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-semibold text-blue-600 mb-0.5">STEP 02 · 위기관리</div>
+                        <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">현금흐름 스트레스 테스트</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">휴직·은퇴·금리인상 시 완충자금 산출</p>
+                    </div>
+                </div>
+
+                <div onclick="openTab(2)" id="nav-card-2" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
+                    <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-semibold text-blue-600 mb-0.5">STEP 03 · 자산배분</div>
+                        <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">대출상환 vs 투자(BEP)</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">원리금 상환과 ISA 복리수익 손익비교</p>
+                    </div>
+                </div>
+
+                <div onclick="openTab(3)" id="nav-card-3" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
+                    <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
+                        <i class="fa-solid fa-piggy-bank"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-semibold text-blue-600 mb-0.5">STEP 04 · 절세설계</div>
+                        <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">연금·ISA 절세 최적화</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">유형별 과세표준 및 최대 환급 플랜</p>
+                    </div>
+                </div>
+
+                <div onclick="openTab(4)" id="nav-card-4" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md ring-1 ring-amber-300/60">
+                    <div class="icon-box w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-base shrink-0 transition">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-semibold text-amber-600 mb-0.5">STEP 05 · 금융백과</div>
+                        <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">재무용어 & AFPK 해설</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">핵심 용어 연결 구조도 및 비율 가이드</p>
+                    </div>
+                </div>
+
+                <div onclick="openTab(5)" id="nav-card-5" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md ring-1 ring-emerald-300/60">
+                    <div class="icon-box w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shrink-0 transition">
+                        <i class="fa-solid fa-landmark"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-semibold text-emerald-600 mb-0.5">STEP 06 · 정책·제도</div>
+                        <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">맞춤형 금융정책·제도</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">청년·주거·육아·절세·서민금융 총람</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 메인 워크스페이스 영역 -->
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 pt-20 pb-16 flex-grow">
+
+        <!-- TAB 1: AFPK 4대 재무지표 진단기 -->
+        <div id="tab-0" class="tab-content active">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">STEP 01 · 재무진단</span>
+                        <h2 class="text-xl font-bold text-slate-900">AFPK 표준 4대 재무건전성 종합 진단</h2>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-1">세분화된 가구 형태(또는 직접 입력 기준)와 월간 수입·지출, 자산·부채 현황을 바탕으로 재무건전성을 정밀 진단합니다.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openTab(5)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3.5 py-2.5 rounded-lg transition flex items-center cursor-pointer">
+                        <i class="fa-solid fa-landmark text-emerald-600 mr-1.5"></i>내 가구 맞춤 정책·제도 보기
+                    </button>
+                    <button type="button" onclick="calculateHealth()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg shadow transition flex items-center text-sm cursor-pointer">
+                        <i class="fa-solid fa-magnifying-glass-chart mr-2"></i>내 자산 진단하기
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 좌측 입력 패널 -->
+                <div class="lg:col-span-5 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <h3 class="text-base font-bold text-slate-800 pb-3 mb-4 border-b border-slate-100 flex items-center justify-between">
+                        <span><i class="fa-solid fa-sliders text-blue-600 mr-2"></i>나의 재무 데이터 입력</span>
+                        <span class="text-xs font-normal text-slate-400">단위: 만 원</span>
+                    </h3>
+
+                    <div class="space-y-4">
+                        <!-- 수정사항 2-1: 가구 유형 선택지 대폭 확대 및 기타(직접 입력) 추가 -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1.5">가구 유형 선택 (선택 유형에 맞춰 권장 저축률·비상자금 기준 동적 적용)</label>
+                            <select id="t1-household-type" onchange="handleHouseholdTypeChange()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-sm font-semibold text-slate-800 bg-slate-50">
+                                <option value="student">🎓 대학생 · 취준생 · 아르바이트 (권장 저축률 30% / 비상금 3개월)</option>
+                                <option value="single">👤 1인 가구 · 사회초년생 (권장 저축률 50% / 비상금 3~6개월)</option>
+                                <option value="dink" selected>👫 맞벌이 무자녀 · 신혼부부 DINK (권장 저축률 45% / 비상금 3~6개월)</option>
+                                <option value="single_income_married">🏠 외벌이 무자녀 · 신혼가구 (권장 저축률 35% / 비상금 6개월)</option>
+                                <option value="infant_family">🍼 영유아 자녀 양육 가구 · 출산휴직기 (권장 저축률 25% / 비상금 6개월)</option>
+                                <option value="school_family">👨‍👩‍👧‍👦 학령기(초·중·고·대학생) 자녀 교육 가구 (권장 저축률 25% / 비상금 6개월)</option>
+                                <option value="freelancer">💻 프리랜서 · 자영업 · N잡러 변동소득 가구 (권장 저축률 40% / 비상금 6~12개월)</option>
+                                <option value="single_parent">🤝 한부모 가구 · 조손 가구 · 부모 부양 가구 (권장 저축률 20% / 비상금 6개월)</option>
+                                <option value="retire_prep">🧓 은퇴 준비기 · 중장년 가구 (권장 저축률 35% / 비상금 6~12개월)</option>
+                                <option value="retired">🏖️ 은퇴 생활기 · 연금 생활자 (권장 저축률 10% / 비상금 12개월)</option>
+                                <option value="custom_hh">✏️ 기타 (나의 가구 유형 및 권장 기준 직접 입력)</option>
+                            </select>
+
+                            <!-- 기타 선택 시 나타나는 유동적 사용자 정의 입력 박스 -->
+                            <div id="t1-custom-hh-box" class="hidden mt-2.5 p-3.5 bg-blue-50/80 border border-blue-200 rounded-lg space-y-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-blue-900 mb-1">나의 가구 형태 / 현재 상황 직접 입력</label>
+                                    <input type="text" id="t1-custom-hh-name" placeholder="예: 형제 자취 가구, 주말부부, 귀농 준비 가구, 캥거루족 등" oninput="calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-2 text-xs font-semibold text-slate-800 bg-white">
+                                </div>
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-blue-900 mb-1">목표 권장 저축률 (%)</label>
+                                        <input type="number" id="t1-custom-save-rate" value="35" min="5" max="90" oninput="calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-1.5 text-right text-xs font-bold text-blue-700 bg-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-blue-900 mb-1">목표 비상자금 (개월 치)</label>
+                                        <input type="number" id="t1-custom-em-months" value="6" min="1" max="24" oninput="calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-1.5 text-right text-xs font-bold text-blue-700 bg-white">
+                                    </div>
+                                </div>
+                                <p class="text-[11px] text-blue-700">※ 본인이 설정한 가구 명칭과 목표 저축률·비상자금 개월 수가 우측 진단 리포트 기준에 즉시 반영됩니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200/80">
+                            <div class="flex justify-between items-center mb-2.5">
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">현금흐름 (월간 수입·지출)</span>
+                                <button type="button" onclick="jumpToDict('cashflow')" class="text-[11px] text-blue-600 hover:underline cursor-pointer"><i class="fa-regular fa-circle-question mr-0.5"></i>고정지출 vs 변동지출이란?</button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">월 총수입 (세후 실수령)</label>
+                                    <div class="relative">
+                                        <input type="number" id="t1-income" value="450" placeholder="예: 450" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-slate-800 bg-white">
+                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">월 대출 원리금 상환액</label>
+                                    <div class="relative">
+                                        <input type="number" id="t1-loan-pmt" value="80" placeholder="원금+이자" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-rose-600 bg-white">
+                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">월 고정지출 (대출제외)</label>
+                                    <div class="relative">
+                                        <input type="number" id="t1-fixed" value="70" placeholder="보험/통신/관리비" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
+                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">월 변동지출 (생활비/식비)</label>
+                                    <div class="relative">
+                                        <input type="number" id="t1-variable" value="140" placeholder="식비/용돈/쇼핑" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
+                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200/80">
+                            <div class="flex justify-between items-center mb-2.5">
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">자산 · 부채 상태표 항목</span>
+                                <button type="button" onclick="jumpToDict('asset')" class="text-[11px] text-blue-600 hover:underline cursor-pointer"><i class="fa-regular fa-circle-question mr-0.5"></i>유동성 자산·순자산이란?</button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">총자산 (부동산+금융)</label>
+                                    <div class="relative">
+                                        <input type="number" id="t1-total-asset" value="35000" placeholder="예: 35000" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-blue-700 bg-white">
+                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">거주/실물 부동산 평가액</label>
+                                    <div class="relative">
+                                        <input type="number" id="t1-real-estate" value="22000" placeholder="전세보증금/자가" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
+                                        <span class="absolute right-3 top-2 text-xs text-slate-400">
