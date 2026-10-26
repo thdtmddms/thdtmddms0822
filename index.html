@@ -21,46 +21,33 @@
         .gold-badge {
             background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
         }
-        /* 탭 전환 강제 보장 스타일 */
-        .tab-panel {
-            display: none;
-        }
-        .tab-panel.active-panel {
-            display: block !important;
-            animation: fadeIn 0.2s ease-in-out;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.25s ease-in-out; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .nav-card {
-            transition: all 0.2s ease;
-            border: 2px solid #e2e8f0;
+            transition: all 0.25s ease;
+            border: 1px solid #e2e8f0;
             user-select: none;
-            cursor: pointer;
-            text-align: left;
-            width: 100%;
-        }
-        /* 카드 내부 요소 클릭 시 이벤트 버블링 방해 금지 */
-        .nav-card * {
-            pointer-events: none;
         }
         .nav-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(30, 58, 138, 0.15);
+            box-shadow: 0 10px 20px -5px rgba(30, 58, 138, 0.12);
         }
-        .nav-card.active-nav {
-            border-color: #1d4ed8 !important;
-            background-color: #eff6ff !important;
-            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2) !important;
+        .nav-card.active {
+            border-color: #1d4ed8;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
         }
-        .nav-card.active-nav .icon-box {
-            background-color: #1d4ed8 !important;
-            color: #ffffff !important;
+        .nav-card.active .icon-box {
+            background-color: #1d4ed8;
+            color: #ffffff;
         }
-        .nav-card.active-nav .nav-title {
-            color: #1e3a8a !important;
-            font-weight: 800 !important;
+        .nav-card.active .nav-title {
+            color: #1e3a8a;
+            font-weight: 700;
         }
         .input-box:focus {
             outline: none;
@@ -69,61 +56,17 @@
         }
         .preset-btn, .dict-filter-btn, .policy-filter-btn {
             transition: all 0.2s ease;
-            cursor: pointer;
         }
         .preset-btn.active, .dict-filter-btn.active, .policy-filter-btn.active {
-            background-color: #1e3a8a !important;
-            color: #ffffff !important;
-            border-color: #1e3a8a !important;
+            background-color: #1e3a8a;
+            color: #ffffff;
+            border-color: #1e3a8a;
         }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
-
-    <!-- 핵심 탭 전환 스크립트 최상단 배치 (지연 없이 즉시 작동 보장) -->
-    <script>
-        window.currentActiveTab = 0;
-
-        window.switchTab = function(tabIndex) {
-            window.currentActiveTab = tabIndex;
-
-            // 1. 모든 탭 패널 숨기고 선택된 탭만 강제 표시
-            for (var i = 0; i < 6; i++) {
-                var panel = document.getElementById('tab-' + i);
-                var card = document.getElementById('nav-card-' + i);
-                if (panel) {
-                    if (i === tabIndex) {
-                        panel.style.display = 'block';
-                        panel.classList.add('active-panel');
-                    } else {
-                        panel.style.display = 'none';
-                        panel.classList.remove('active-panel');
-                    }
-                }
-                if (card) {
-                    if (i === tabIndex) {
-                        card.classList.add('active-nav');
-                    } else {
-                        card.classList.remove('active-nav');
-                    }
-                }
-            }
-
-            // 2. 탭별 계산 및 차트 업데이트 실행 (오류 격리)
-            try {
-                if (tabIndex === 0 && typeof window.calculateHealth === 'function') window.calculateHealth();
-                if (tabIndex === 1 && typeof window.calculateStress === 'function') window.calculateStress();
-                if (tabIndex === 2 && typeof window.calculateBEP === 'function') window.calculateBEP();
-                if (tabIndex === 3 && typeof window.calculateTax === 'function') window.calculateTax();
-                if (tabIndex === 4 && typeof window.renderDictionary === 'function') window.renderDictionary();
-                if (tabIndex === 5 && typeof window.renderPolicies === 'function') window.renderPolicies();
-            } catch (e) {
-                console.warn('계산 업데이트 중 경미한 예외:', e);
-            }
-        };
-    </script>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
@@ -140,10 +83,10 @@
                 <span class="text-slate-600">|</span>
                 <span><i class="fa-solid fa-percent text-sky-400 mr-1"></i>주담대 평균 연 4.30%</span>
                 <span class="text-slate-600 hidden md:inline">|</span>
-                <button type="button" onclick="window.switchTab(4)" class="hidden md:inline-block bg-blue-900/80 hover:bg-blue-800 text-sky-200 px-2.5 py-0.5 rounded border border-blue-700 transition cursor-pointer">
-                    <i class="fa-solid fa-book-open mr-1"></i>재무용어·비율 가이드(STEP 05)
+                <button type="button" onclick="openTab(4)" class="hidden md:inline-block bg-blue-900/80 hover:bg-blue-800 text-sky-200 px-2.5 py-0.5 rounded border border-blue-700 transition cursor-pointer">
+                    <i class="fa-solid fa-book-open mr-1"></i>재무용어·비율 가이드
                 </button>
-                <button type="button" onclick="window.switchTab(5)" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 px-2.5 py-0.5 rounded border border-emerald-700 transition cursor-pointer">
+                <button type="button" onclick="openTab(5)" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 px-2.5 py-0.5 rounded border border-emerald-700 transition cursor-pointer">
                     <i class="fa-solid fa-landmark mr-1"></i>추천 금융정책·제도(STEP 06)
                 </button>
             </div>
@@ -153,7 +96,7 @@
     <!-- 2. 메인 은행 헤더 & 모드 선택기 (수정사항 1: 직접 입력 & 공모전 케이스만 유지) -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.switchTab(0)">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="openTab(0)">
                 <div class="w-11 h-11 rounded-xl bank-gradient flex items-center justify-center text-white font-bold text-xl shadow-md">
                     <i class="fa-solid fa-building-columns"></i>
                 </div>
@@ -169,10 +112,10 @@
             <!-- 우측: 직접 입력(초기화) 및 공모전 케이스 불러오기만 배치 -->
             <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs font-bold text-slate-400 mr-1 hidden sm:inline"><i class="fa-solid fa-sliders mr-1"></i>데이터 입력 모드:</span>
-                <button type="button" onclick="window.loadPreset('custom')" id="btn-preset-custom" class="preset-btn active text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold px-3.5 py-2 rounded-lg shadow-sm">
+                <button type="button" onclick="loadPreset('custom')" id="btn-preset-custom" class="preset-btn active text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold px-3.5 py-2 rounded-lg shadow-sm cursor-pointer">
                     <i class="fa-solid fa-pen-to-square mr-1.5"></i>직접 입력 모드 (초기화)
                 </button>
-                <button type="button" onclick="window.loadPreset('case2')" id="btn-preset-case2" class="preset-btn text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-3.5 py-2 rounded-lg shadow-sm">
+                <button type="button" onclick="loadPreset('case2')" id="btn-preset-case2" class="preset-btn text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-3.5 py-2 rounded-lg shadow-sm cursor-pointer">
                     <i class="fa-solid fa-star text-amber-500 mr-1.5"></i>[공모전 케이스] 30대 맞벌이 신혼부부
                 </button>
             </div>
@@ -202,9 +145,9 @@
                 </div>
             </div>
 
-            <!-- 6대 서비스 퀵 메뉴 탭 (모두 button 태그 + window.switchTab 연결) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5 -mb-24 relative z-30">
-                <button type="button" onclick="window.switchTab(0)" id="nav-card-0" class="nav-card active-nav bg-white text-slate-800 p-3 rounded-xl flex items-start space-x-2.5 shadow-md">
+            <!-- 6대 서비스 퀵 메뉴 탭 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5 -mb-24 relative z-20">
+                <div onclick="openTab(0)" id="nav-card-0" class="nav-card active bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
                     <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
                         <i class="fa-solid fa-heart-pulse"></i>
                     </div>
@@ -213,9 +156,9 @@
                         <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">4대 재무건전성 진단</div>
                         <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">가구별 맞춤 기준·DSR·비상금 평가</p>
                     </div>
-                </button>
+                </div>
 
-                <button type="button" onclick="window.switchTab(1)" id="nav-card-1" class="nav-card bg-white text-slate-800 p-3 rounded-xl flex items-start space-x-2.5 shadow-md">
+                <div onclick="openTab(1)" id="nav-card-1" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
                     <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
@@ -224,9 +167,9 @@
                         <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">현금흐름 스트레스 테스트</div>
                         <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">휴직·은퇴·금리인상 시 완충자금 산출</p>
                     </div>
-                </button>
+                </div>
 
-                <button type="button" onclick="window.switchTab(2)" id="nav-card-2" class="nav-card bg-white text-slate-800 p-3 rounded-xl flex items-start space-x-2.5 shadow-md">
+                <div onclick="openTab(2)" id="nav-card-2" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
                     <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
                         <i class="fa-solid fa-scale-balanced"></i>
                     </div>
@@ -235,9 +178,9 @@
                         <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">대출상환 vs 투자(BEP)</div>
                         <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">원리금 상환과 ISA 복리수익 손익비교</p>
                     </div>
-                </button>
+                </div>
 
-                <button type="button" onclick="window.switchTab(3)" id="nav-card-3" class="nav-card bg-white text-slate-800 p-3 rounded-xl flex items-start space-x-2.5 shadow-md">
+                <div onclick="openTab(3)" id="nav-card-3" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md">
                     <div class="icon-box w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 transition">
                         <i class="fa-solid fa-piggy-bank"></i>
                     </div>
@@ -246,9 +189,9 @@
                         <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">연금·ISA 절세 최적화</div>
                         <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">유형별 과세표준 및 최대 환급 플랜</p>
                     </div>
-                </button>
+                </div>
 
-                <button type="button" onclick="window.switchTab(4)" id="nav-card-4" class="nav-card bg-white text-slate-800 p-3 rounded-xl flex items-start space-x-2.5 shadow-md">
+                <div onclick="openTab(4)" id="nav-card-4" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md ring-1 ring-amber-300/60">
                     <div class="icon-box w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-base shrink-0 transition">
                         <i class="fa-solid fa-book-open-reader"></i>
                     </div>
@@ -257,9 +200,9 @@
                         <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">재무용어 & AFPK 해설</div>
                         <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">핵심 용어 연결 구조도 및 비율 가이드</p>
                     </div>
-                </button>
+                </div>
 
-                <button type="button" onclick="window.switchTab(5)" id="nav-card-5" class="nav-card bg-white text-slate-800 p-3 rounded-xl flex items-start space-x-2.5 shadow-md">
+                <div onclick="openTab(5)" id="nav-card-5" class="nav-card bg-white text-slate-800 p-3 rounded-xl cursor-pointer flex items-start space-x-2.5 shadow-md ring-1 ring-emerald-300/60">
                     <div class="icon-box w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shrink-0 transition">
                         <i class="fa-solid fa-landmark"></i>
                     </div>
@@ -268,7 +211,7 @@
                         <div class="nav-title text-xs sm:text-sm font-bold text-slate-800">맞춤형 금융정책·제도</div>
                         <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">청년·주거·육아·절세·서민금융 총람</p>
                     </div>
-                </button>
+                </div>
             </div>
         </div>
     </section>
@@ -276,8 +219,8 @@
     <!-- 4. 메인 워크스페이스 영역 -->
     <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 pt-20 pb-16 flex-grow">
 
-        <!-- TAB 0 (STEP 01): AFPK 4대 재무지표 진단기 -->
-        <div id="tab-0" class="tab-panel active-panel" style="display: block;">
+        <!-- TAB 1: AFPK 4대 재무지표 진단기 -->
+        <div id="tab-0" class="tab-content active">
             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-wrap justify-between items-center gap-4">
                 <div>
                     <div class="flex items-center space-x-2">
@@ -287,10 +230,10 @@
                     <p class="text-sm text-slate-500 mt-1">세분화된 가구 형태(또는 직접 입력 기준)와 월간 수입·지출, 자산·부채 현황을 바탕으로 재무건전성을 정밀 진단합니다.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="window.switchTab(5)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3.5 py-2.5 rounded-lg transition flex items-center cursor-pointer">
+                    <button type="button" onclick="openTab(5)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold px-3.5 py-2.5 rounded-lg transition flex items-center cursor-pointer">
                         <i class="fa-solid fa-landmark text-emerald-600 mr-1.5"></i>내 가구 맞춤 정책·제도 보기
                     </button>
-                    <button type="button" onclick="window.calculateHealth()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg shadow transition flex items-center text-sm cursor-pointer">
+                    <button type="button" onclick="calculateHealth()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg shadow transition flex items-center text-sm cursor-pointer">
                         <i class="fa-solid fa-magnifying-glass-chart mr-2"></i>내 자산 진단하기
                     </button>
                 </div>
@@ -308,7 +251,7 @@
                         <!-- 수정사항 2-1: 가구 유형 선택지 대폭 확대 및 기타(직접 입력) 추가 -->
                         <div>
                             <label class="block text-xs font-bold text-slate-600 mb-1.5">가구 유형 선택 (선택 유형에 맞춰 권장 저축률·비상자금 기준 동적 적용)</label>
-                            <select id="t1-household-type" onchange="window.handleHouseholdTypeChange()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-sm font-semibold text-slate-800 bg-slate-50">
+                            <select id="t1-household-type" onchange="handleHouseholdTypeChange()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-sm font-semibold text-slate-800 bg-slate-50">
                                 <option value="student">🎓 대학생 · 취준생 · 아르바이트 (권장 저축률 30% / 비상금 3개월)</option>
                                 <option value="single">👤 1인 가구 · 사회초년생 (권장 저축률 50% / 비상금 3~6개월)</option>
                                 <option value="dink" selected>👫 맞벌이 무자녀 · 신혼부부 DINK (권장 저축률 45% / 비상금 3~6개월)</option>
@@ -323,19 +266,19 @@
                             </select>
 
                             <!-- 기타 선택 시 나타나는 유동적 사용자 정의 입력 박스 -->
-                            <div id="t1-custom-hh-box" style="display: none;" class="mt-2.5 p-3.5 bg-blue-50/80 border border-blue-200 rounded-lg space-y-2.5">
+                            <div id="t1-custom-hh-box" class="hidden mt-2.5 p-3.5 bg-blue-50/80 border border-blue-200 rounded-lg space-y-2.5">
                                 <div>
                                     <label class="block text-[11px] font-bold text-blue-900 mb-1">나의 가구 형태 / 현재 상황 직접 입력</label>
-                                    <input type="text" id="t1-custom-hh-name" placeholder="예: 형제 자취 가구, 주말부부, 귀농 준비 가구, 캥거루족 등" oninput="window.calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-2 text-xs font-semibold text-slate-800 bg-white">
+                                    <input type="text" id="t1-custom-hh-name" placeholder="예: 형제 자취 가구, 주말부부, 귀농 준비 가구, 캥거루족 등" oninput="calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-2 text-xs font-semibold text-slate-800 bg-white">
                                 </div>
                                 <div class="grid grid-cols-2 gap-2.5">
                                     <div>
                                         <label class="block text-[11px] font-bold text-blue-900 mb-1">목표 권장 저축률 (%)</label>
-                                        <input type="number" id="t1-custom-save-rate" value="35" min="5" max="90" oninput="window.calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-1.5 text-right text-xs font-bold text-blue-700 bg-white">
+                                        <input type="number" id="t1-custom-save-rate" value="35" min="5" max="90" oninput="calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-1.5 text-right text-xs font-bold text-blue-700 bg-white">
                                     </div>
                                     <div>
                                         <label class="block text-[11px] font-bold text-blue-900 mb-1">목표 비상자금 (개월 치)</label>
-                                        <input type="number" id="t1-custom-em-months" value="6" min="1" max="24" oninput="window.calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-1.5 text-right text-xs font-bold text-blue-700 bg-white">
+                                        <input type="number" id="t1-custom-em-months" value="6" min="1" max="24" oninput="calculateHealth()" class="input-box w-full border border-blue-300 rounded-lg p-1.5 text-right text-xs font-bold text-blue-700 bg-white">
                                     </div>
                                 </div>
                                 <p class="text-[11px] text-blue-700">※ 본인이 설정한 가구 명칭과 목표 저축률·비상자금 개월 수가 우측 진단 리포트 기준에 즉시 반영됩니다.</p>
@@ -345,34 +288,34 @@
                         <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200/80">
                             <div class="flex justify-between items-center mb-2.5">
                                 <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">현금흐름 (월간 수입·지출)</span>
-                                <button type="button" onclick="window.jumpToDict('cashflow')" class="text-[11px] text-blue-600 hover:underline cursor-pointer"><i class="fa-regular fa-circle-question mr-0.5"></i>고정지출 vs 변동지출이란?</button>
+                                <button type="button" onclick="jumpToDict('cashflow')" class="text-[11px] text-blue-600 hover:underline cursor-pointer"><i class="fa-regular fa-circle-question mr-0.5"></i>고정지출 vs 변동지출이란?</button>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">월 총수입 (세후 실수령)</label>
                                     <div class="relative">
-                                        <input type="number" id="t1-income" value="450" placeholder="예: 450" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-slate-800 bg-white">
+                                        <input type="number" id="t1-income" value="450" placeholder="예: 450" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-slate-800 bg-white">
                                         <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">월 대출 원리금 상환액</label>
                                     <div class="relative">
-                                        <input type="number" id="t1-loan-pmt" value="80" placeholder="원금+이자" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-rose-600 bg-white">
+                                        <input type="number" id="t1-loan-pmt" value="80" placeholder="원금+이자" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-rose-600 bg-white">
                                         <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">월 고정지출 (대출제외)</label>
                                     <div class="relative">
-                                        <input type="number" id="t1-fixed" value="70" placeholder="보험/통신/관리비" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
+                                        <input type="number" id="t1-fixed" value="70" placeholder="보험/통신/관리비" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
                                         <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">월 변동지출 (생활비/식비)</label>
                                     <div class="relative">
-                                        <input type="number" id="t1-variable" value="140" placeholder="식비/용돈/쇼핑" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
+                                        <input type="number" id="t1-variable" value="140" placeholder="식비/용돈/쇼핑" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
                                         <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
                                     </div>
                                 </div>
@@ -382,1917 +325,18 @@
                         <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200/80">
                             <div class="flex justify-between items-center mb-2.5">
                                 <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">자산 · 부채 상태표 항목</span>
-                                <button type="button" onclick="window.jumpToDict('asset')" class="text-[11px] text-blue-600 hover:underline cursor-pointer"><i class="fa-regular fa-circle-question mr-0.5"></i>유동성 자산·순자산이란?</button>
+                                <button type="button" onclick="jumpToDict('asset')" class="text-[11px] text-blue-600 hover:underline cursor-pointer"><i class="fa-regular fa-circle-question mr-0.5"></i>유동성 자산·순자산이란?</button>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">총자산 (부동산+금융)</label>
                                     <div class="relative">
-                                        <input type="number" id="t1-total-asset" value="35000" placeholder="예: 35000" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-blue-700 bg-white">
+                                        <input type="number" id="t1-total-asset" value="35000" placeholder="예: 35000" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-blue-700 bg-white">
                                         <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">거주/실물 부동산 평가액</label>
                                     <div class="relative">
-                                        <input type="number" id="t1-real-estate" value="22000" placeholder="전세보증금/자가" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
-                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">유동성 자산 (현금/CMA)</label>
-                                    <div class="relative">
-                                        <input type="number" id="t1-liquid" value="1200" placeholder="입출금/파킹통장" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-emerald-700 bg-white">
-                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">총부채 잔액 (대출총액)</label>
-                                    <div class="relative">
-                                        <input type="number" id="t1-total-debt" value="12000" placeholder="주담대/신용대출" oninput="window.calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-rose-600 bg-white">
-                                        <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 p-3 bg-blue-50/70 rounded-lg border border-blue-100 text-xs text-slate-600 leading-relaxed">
-                        <i class="fa-solid fa-circle-info text-blue-600 mr-1"></i>
-                        <strong>실시간 반응형 진단:</strong> 가구 유형이나 입력 숫자를 수정하면 즉시 우측의 4대 재무지표 게이지와 현금흐름 차트, PB 맞춤 소견이 갱신됩니다.
-                    </div>
-                </div>
-
-                <!-- 우측 진단 결과 리포트 패널 -->
-                <div class="lg:col-span-7 space-y-6">
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                        <div class="flex flex-wrap justify-between items-center pb-4 mb-4 border-b border-slate-100 gap-2">
-                            <h3 class="text-base font-bold text-slate-800">
-                                <i class="fa-solid fa-clipboard-check text-blue-600 mr-2"></i>AFPK 4대 핵심 재무지표 진단 리포트
-                            </h3>
-                            <span id="t1-overall-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                                종합등급 산출중
-                            </span>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="t1-metrics-grid"></div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
-                            <h4 class="text-sm font-bold text-slate-700 mb-3"><i class="fa-solid fa-chart-pie text-blue-600 mr-1.5"></i>월간 현금흐름 배분 구조</h4>
-                            <div class="relative h-48 flex items-center justify-center">
-                                <canvas id="healthCashflowChart"></canvas>
-                            </div>
-                            <div id="t1-cashflow-summary" class="mt-3 text-xs text-center text-slate-500 bg-slate-50 py-2 rounded"></div>
-                        </div>
-
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
-                            <div>
-                                <h4 class="text-sm font-bold text-slate-700 mb-3"><i class="fa-solid fa-user-doctor text-blue-600 mr-1.5"></i>AI 프라이빗 뱅커(PB) 맞춤 진단 소견</h4>
-                                <div id="t1-pb-comment" class="text-xs sm:text-sm text-slate-600 space-y-2.5 leading-relaxed"></div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400">
-                                <span>순자산: <strong id="t1-networth" class="text-slate-700">-</strong></span>
-                                <span>자기자본비율: <strong id="t1-equity-ratio" class="text-slate-700">-</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 1 (STEP 02): 생애 전환기 소득 절벽 스트레스 테스트 -->
-        <div id="tab-1" class="tab-panel" style="display: none;">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-wrap justify-between items-center gap-4">
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">STEP 02 · 위기관리</span>
-                        <h2 class="text-xl font-bold text-slate-900">생애 이벤트 현금흐름 스트레스 테스트 & 4통장 예산 설계</h2>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-1">이직·휴직, 금리 인상, 육아휴직, 은퇴 등 소득/지출 변동 상황에서의 비상자금 버팀력을 테스트하고 맞춤형 통장 쪼개기 예산을 설계합니다.</p>
-                </div>
-                <button type="button" onclick="window.calculateStress()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-2.5 rounded-lg shadow transition flex items-center text-sm cursor-pointer">
-                    <i class="fa-solid fa-bolt mr-2"></i>스트레스 테스트 실행
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- 좌측 변수 설정 -->
-                <div class="lg:col-span-5 bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
-                    <h3 class="text-base font-bold text-slate-800 pb-3 border-b border-slate-100">
-                        <i class="fa-solid fa-sliders text-blue-600 mr-2"></i>생애 이벤트 시나리오 및 현금흐름 설정
-                    </h3>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1.5">시뮬레이션할 생애 이벤트 선택</label>
-                        <select id="t2-event-type" onchange="window.applyEventPreset()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-sm font-semibold text-slate-800 bg-slate-50">
-                            <option value="custom_event" selected>⚙️ 직접 입력 (내 상황에 맞게 수치 자유 설정)</option>
-                            <option value="job_change">💼 이직 · 구직 · 안식년으로 인한 일시 소득감소</option>
-                            <option value="rate_hike">📈 금리 인상 및 물가 상승으로 인한 고정비 급증</option>
-                            <option value="parental">👶 출산 및 육아휴직 돌입 (맞벌이 → 외벌이 전환)</option>
-                            <option value="retire">🏖️ 정년퇴직 후 연금 개시 전 소득 크레바스 구간</option>
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">현재 월 가계소득</label>
-                            <div class="relative">
-                                <input type="number" id="t2-current-income" value="450" oninput="window.calculateStress()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-slate-800">
-                                <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-rose-600 mb-1">이벤트 기간 중 예상 월소득</label>
-                            <div class="relative">
-                                <input type="number" id="t2-new-income" value="280" oninput="window.calculateStress()" class="input-box w-full border border-rose-300 rounded-lg p-2 pr-10 text-right font-bold text-rose-600 bg-rose-50/30">
-                                <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">현재 월 총지출 (고정+변동)</label>
-                            <div class="relative">
-                                <input type="number" id="t2-expenses" value="290" oninput="window.calculateStress()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-800">
-                                <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">이벤트 시 추가 월지출</label>
-                            <div class="relative">
-                                <input type="number" id="t2-extra-exp" value="20" oninput="window.calculateStress()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-800">
-                                <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">이벤트 지속 기간</label>
-                            <div class="relative">
-                                <input type="number" id="t2-duration" value="12" oninput="window.calculateStress()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-blue-700">
-                                <span class="absolute right-3 top-2 text-xs text-slate-400">개월</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">현재 보유 비상예비자금</label>
-                            <div class="relative">
-                                <input type="number" id="t2-current-buffer" value="1200" oninput="window.calculateStress()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-bold text-emerald-700">
-                                <span class="absolute right-3 top-2 text-xs text-slate-400">만원</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-4 bg-blue-50/80 rounded-xl border border-blue-200">
-                        <div class="flex justify-between items-center mb-1.5">
-                            <label class="text-xs font-bold text-blue-900"><i class="fa-solid fa-scissors mr-1"></i>[해법] 월 지출 다이어트(변동비·보험료 절감) 목표</label>
-                            <span id="t2-cut-label" class="text-xs font-extrabold text-blue-700">월 40만 원 절감</span>
-                        </div>
-                        <input type="range" id="t2-expense-cut" min="0" max="150" step="5" value="40" oninput="document.getElementById('t2-cut-label').innerText = '월 ' + this.value + '만 원 절감'; window.calculateStress();" class="w-full accent-blue-600 cursor-pointer">
-                        <div class="flex justify-between text-[11px] text-slate-500 mt-1">
-                            <span>절감 없음 (0만)</span>
-                            <span>권장 다이어트 (30~80만)</span>
-                            <span>최대 긴축 (150만)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 우측 결과 리포트 -->
-                <div class="lg:col-span-7 space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="t2-kpi-cards"></div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                        <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
-                            <h4 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-chart-area text-blue-600 mr-1.5"></i>이벤트 기간 중 비상예비자금 잔액 변화 추이</h4>
-                            <span class="text-xs text-slate-400">기존 지출 유지 시 vs 지출 구조조정 실행 시</span>
-                        </div>
-                        <div class="h-60">
-                            <canvas id="stressChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div id="t2-prescription" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2 (STEP 03): 대출 중도상환 vs ISA ETF 투자 비교 (BEP) -->
-        <div id="tab-2" class="tab-panel" style="display: none;">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-wrap justify-between items-center gap-4">
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">STEP 03 · 자산배분</span>
-                        <h2 class="text-xl font-bold text-slate-900">대출 원금 상환 vs 절세 계좌(ISA) 적립식 투자 손익 비교</h2>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-1">본인의 투자 성향과 대출 금리를 비교하여 잉여 자금을 대출 상환에 쓸지, 투자에 쓸지 최적의 해법을 계산합니다.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="window.jumpToDict('tax')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-lg transition cursor-pointer">
-                        <i class="fa-regular fa-circle-question text-blue-600 mr-1"></i>ISA 비과세·BEP란?
-                    </button>
-                    <button type="button" onclick="window.calculateBEP()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg shadow transition flex items-center text-sm cursor-pointer">
-                        <i class="fa-solid fa-chart-line mr-2"></i>비교 시뮬레이션 실행
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- 좌측 입력 폼 -->
-                <div class="lg:col-span-4 bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
-                    <h3 class="text-base font-bold text-slate-800 pb-3 border-b border-slate-100">
-                        <i class="fa-solid fa-calculator text-blue-600 mr-2"></i>나의 투자 · 대출 조건 설정
-                    </h3>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">투자 성향별 포트폴리오 프리셋 선택</label>
-                        <select id="t3-portfolio-preset" onchange="window.applyPortfolioPreset()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-xs font-semibold text-slate-800 bg-slate-50">
-                            <option value="stable">🛡️ 안정형 (채권 70% + 배당주 30% | 연 4.0%)</option>
-                            <option value="balanced" selected>⚖️ 중립·배당형 (배당ETF 60% + 채권 40% | 연 5.2%)</option>
-                            <option value="growth">🚀 적극투자형 (미국지수·성장주 80% + 채권 20% | 연 7.5%)</option>
-                            <option value="custom">✏️ 직접 수익률 입력</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">월 가용 잉여 자금 (월 저축/상환액)</label>
-                        <div class="relative">
-                            <input type="number" id="t3-pmt" value="100" oninput="window.calculateBEP()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 pr-10 text-right font-bold text-blue-700">
-                            <span class="absolute right-3 top-2.5 text-xs text-slate-400">만원</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">보유 대출 금리 (연)</label>
-                            <div class="relative">
-                                <input type="number" id="t3-loan-rate" step="0.1" value="4.3" oninput="window.calculateBEP()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 pr-8 text-right font-bold text-rose-600">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400">%</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">기대 투자 수익률 (연)</label>
-                            <div class="relative">
-                                <input type="number" id="t3-inv-rate" step="0.1" value="5.2" oninput="document.getElementById('t3-portfolio-preset').value='custom'; window.calculateBEP();" class="input-box w-full border border-slate-300 rounded-lg p-2.5 pr-8 text-right font-bold text-emerald-600">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400">%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">시뮬레이션 비교 기간</label>
-                        <select id="t3-years" onchange="window.calculateBEP()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-sm font-bold text-slate-800">
-                            <option value="3">3년 (ISA 의무가입 만기 시점)</option>
-                            <option value="5">5년 (중기 자산 형성 시점)</option>
-                            <option value="10" selected>10년 (장기 복리 효과 비교)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">투자 계좌 과세 유형</label>
-                        <select id="t3-tax-mode" onchange="window.calculateBEP()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-xs font-semibold text-slate-800 bg-slate-50">
-                            <option value="isa_single">중개형 ISA - 1인 일반형 (200만 비과세 + 9.9% 분리과세)</option>
-                            <option value="isa_common">중개형 ISA - 서민·농어민형 (400만 비과세 + 9.9% 분리과세)</option>
-                            <option value="isa_couple" selected>중개형 ISA - 부부 합산형 (400만~800만 비과세 + 9.9% 분리과세)</option>
-                            <option value="normal">일반 과세 증권계좌 (배당소득세 15.4% 원천징수)</option>
-                        </select>
-                    </div>
-
-                    <div id="t3-portfolio-desc" class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5"></div>
-                </div>
-
-                <!-- 우측 차트 & 비교 테이블 -->
-                <div class="lg:col-span-8 space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="t3-summary-cards"></div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                        <h4 class="text-sm font-bold text-slate-800 mb-3"><i class="fa-solid fa-chart-line text-blue-600 mr-1.5"></i>연차별 누적 경제적 이득 비교 (누적 절감 이자 vs 세후 투자 순수익)</h4>
-                        <div class="h-64">
-                            <canvas id="bepChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="px-5 py-3 bg-slate-800 text-white text-xs font-bold flex justify-between items-center">
-                            <span>연차별 시뮬레이션 상세 비교표 (단위: 만 원)</span>
-                            <span class="text-slate-300 font-normal">월 복리 적립 및 세후 기준</span>
-                        </div>
-                        <div class="overflow-x-auto max-h-56">
-                            <table class="w-full text-xs text-right">
-                                <thead class="bg-slate-100 text-slate-600 border-b border-slate-200 sticky top-0">
-                                    <tr>
-                                        <th class="py-2.5 px-4 text-left">경과 연수</th>
-                                        <th class="py-2.5 px-4">누적 투입원금</th>
-                                        <th class="py-2.5 px-4 text-rose-700">① 대출상환 누적 이자절감</th>
-                                        <th class="py-2.5 px-4 text-blue-700">② 투자 세후 순수익</th>
-                                        <th class="py-2.5 px-4">우위 전략 (순익 격차)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="t3-table-body" class="divide-y divide-slate-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3 (STEP 04): 연금저축 · IRP · ISA 절세 최적화 계산기 -->
-        <div id="tab-3" class="tab-panel" style="display: none;">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-wrap justify-between items-center gap-4">
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">STEP 04 · 절세설계</span>
-                        <h2 class="text-xl font-bold text-slate-900">소득 유형별 연말정산·종합소득세 세액공제 & 연금계좌 최적화 계산기</h2>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-1">근로자, 맞벌이·외벌이 부부, 육아휴직자, 프리랜서·자영업자 등 다양한 과세 상황에 맞춰 최적의 연금저축·IRP 납입 전략을 산출합니다.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="window.jumpToDict('tax')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-lg transition cursor-pointer">
-                        <i class="fa-regular fa-circle-question text-blue-600 mr-1"></i>세액공제·결정세액이란?
-                    </button>
-                    <button type="button" onclick="window.calculateTax()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg shadow transition flex items-center text-sm cursor-pointer">
-                        <i class="fa-solid fa-coins mr-2"></i>최적 절세 플랜 산출
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- 좌측 입력 폼 -->
-                <div class="lg:col-span-5 bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
-                    <h3 class="text-base font-bold text-slate-800 pb-3 border-b border-slate-100">
-                        <i class="fa-solid fa-user-group text-blue-600 mr-2"></i>절세 진단 대상 및 연금 납입액 설정
-                    </h3>
-
-                    <!-- 수정사항 2-2: STEP 04 절세 진단 대상 선택지 폭 확대 및 기타(직접 입력) 추가 -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1.5">절세 진단 대상 선택 (과세 유형 및 가구 상태)</label>
-                        <select id="t4-family-mode" onchange="window.toggleSpouseInput(); window.calculateTax();" class="input-box w-full border border-slate-300 rounded-lg p-2.5 text-sm font-semibold text-slate-800 bg-slate-50">
-                            <option value="single_worker">👤 1인 가구 · 단독 근로소득자 (연말정산 단독 세액공제)</option>
-                            <option value="couple" selected>👫 맞벌이 부부 근로자 (부부 중 최적 납입 명의자 비교 추천)</option>
-                            <option value="single_earner_married">🏠 외벌이 부부 (주 소득자 단독 공제 + 배우자 ISA 활용)</option>
-                            <option value="parental_leave_couple">👶 육아휴직 · 출산휴가 · 질병휴직 예정 부부 (결정세액 급감 리스크 방어)</option>
-                            <option value="freelancer_biz">💼 개인사업자 · 프리랜서 · 3.3% 원천징수자 (5월 종합소득세 절세)</option>
-                            <option value="high_fin_income">📈 금융소득(이자·배당) 연 2,000만 원 근접/초과자 (종합과세 분리 전략)</option>
-                            <option value="retire_pensioner">🧓 은퇴 임박자 · 퇴직금 수령 및 연금 개시 준비자 (퇴직소득세 이연)</option>
-                            <option value="custom_tax">✏️ 기타 (나의 소득 형태 · 절세 고민 직접 입력)</option>
-                        </select>
-
-                        <!-- 기타(직접 입력) 선택 시 활성화되는 입력창 -->
-                        <div id="t4-custom-tax-box" style="display: none;" class="mt-2.5 p-3.5 bg-indigo-50/80 border border-indigo-200 rounded-lg space-y-2.5">
-                            <div>
-                                <label class="block text-[11px] font-bold text-indigo-900 mb-1">나의 과세 상태 / 절세 고민 직접 작성</label>
-                                <input type="text" id="t4-custom-tax-desc" placeholder="예: 근로소득+부업소득 합산 신고, 연도 중 중도퇴사 후 재취업, 부부 공동사업자 등" oninput="window.calculateTax()" class="input-box w-full border border-indigo-300 rounded-lg p-2 text-xs font-semibold text-slate-800 bg-white">
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-[11px] font-bold text-indigo-900">배우자 소득 합산·비교 여부</span>
-                                <label class="inline-flex items-center space-x-1.5 text-xs text-indigo-900 cursor-pointer">
-                                    <input type="checkbox" id="t4-custom-has-spouse" onchange="window.toggleSpouseInput(); window.calculateTax();" class="w-4 h-4 accent-indigo-600 rounded">
-                                    <span>배우자 소득도 함께 입력하여 비교하기</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">본인 연간 총급여/종합소득</label>
-                            <div class="relative">
-                                <input type="number" id="t4-salary-h" value="5200" oninput="window.calculateTax()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 pr-10 text-right font-bold text-slate-800">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400">만원</span>
-                            </div>
-                        </div>
-                        <div id="t4-spouse-box">
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">배우자 연간 총급여/소득</label>
-                            <div class="relative">
-                                <input type="number" id="t4-salary-w" value="4600" oninput="window.calculateTax()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 pr-10 text-right font-bold text-slate-800">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400">만원</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="t4-leave-box" class="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" id="t4-leave-check" onchange="window.calculateTax()" class="w-4 h-4 accent-amber-600 rounded">
-                            <span class="text-xs font-bold text-amber-900">배우자(또는 본인) 휴직·소득절벽 예정 (결정세액 부족 리스크 반영)</span>
-                        </label>
-                        <p class="text-[11px] text-amber-800 mt-1 pl-6 leading-relaxed">
-                            체크 시: 휴직 연도에는 과세 급여 급감으로 결정세액(낼 세금)이 부족해질 수 있으므로, 소득이 유지되는 배우자 명의로 납입을 집중하도록 알고리즘이 보정합니다.
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">연금저축 월 납입액</label>
-                            <div class="relative">
-                                <input type="number" id="t4-pension-monthly" value="40" oninput="window.calculateTax()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 pr-10 text-right font-bold text-blue-700">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400">만원</span>
-                            </div>
-                            <span class="text-[11px] text-slate-400">연 600만 원 한도 권장</span>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">IRP (퇴직연금) 월 납입액</label>
-                            <div class="relative">
-                                <input type="number" id="t4-irp-monthly" value="25" oninput="window.calculateTax()" class="input-box w-full border border-slate-300 rounded-lg p-2.5 pr-10 text-right font-bold text-blue-700">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400">만원</span>
-                            </div>
-                            <span class="text-[11px] text-slate-400">연금저축 합산 연 900만 한도</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 우측 결과 리포트 -->
-                <div class="lg:col-span-7 space-y-6">
-                    <div id="t4-result-box" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6"></div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="px-5 py-3 bg-slate-800 text-white text-xs font-bold">
-                            현행 세법상 연금계좌(연금저축 + IRP) 세액공제 기준표
-                        </div>
-                        <table class="w-full text-xs text-left">
-                            <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2.5 px-4">구분 (근로소득 총급여 / 종합소득금액 기준)</th>
-                                    <th class="py-2.5 px-4">연금저축 한도</th>
-                                    <th class="py-2.5 px-4">IRP 포함 총한도</th>
-                                    <th class="py-2.5 px-4">세액공제율 (지방소득세 포함)</th>
-                                    <th class="py-2.5 px-4 text-right">연간 최대 환급액</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-slate-700">
-                                <tr>
-                                    <td class="py-2.5 px-4 font-semibold">총급여 5,500만 이하 (종합소득 4,500만 이하)</td>
-                                    <td class="py-2.5 px-4">연 600만 원</td>
-                                    <td class="py-2.5 px-4 font-bold">연 900만 원</td>
-                                    <td class="py-2.5 px-4 text-emerald-700 font-bold">16.5%</td>
-                                    <td class="py-2.5 px-4 text-right font-bold text-emerald-700">148.5만 원</td>
-                                </tr>
-                                <tr class="bg-blue-50/50">
-                                    <td class="py-2.5 px-4 font-semibold">총급여 5,500만 초과 (종합소득 4,500만 초과)</td>
-                                    <td class="py-2.5 px-4">연 600만 원</td>
-                                    <td class="py-2.5 px-4 font-bold">연 900만 원</td>
-                                    <td class="py-2.5 px-4 text-blue-700 font-bold">13.2%</td>
-                                    <td class="py-2.5 px-4 text-right font-bold text-blue-700">118.8만 원</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4 (STEP 05): 재무용어 백과사전 & 용어 간 연관성 & AFPK 표준 재무비율 가이드 -->
-        <div id="tab-4" class="tab-panel space-y-8" style="display: none;">
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-wrap justify-between items-center gap-4">
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="px-2.5 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">STEP 05 · 금융백과</span>
-                        <h2 class="text-xl font-bold text-slate-900">재무설계 핵심 용어 연관성 맵 & AFPK 표준 재무비율 해설</h2>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-1">어려운 금융·세무 용어의 뜻과 각 개념들이 서로 어떻게 영향을 주고받는지(상호 연관성), 그리고 한국FP협회(AFPK)의 표준 진단 기준을 알기 쉽게 설명합니다.</p>
-                </div>
-            </div>
-
-            <!-- 섹션 1: 재무설계 용어 간 유기적 연관성 구조도 -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <div class="flex flex-wrap justify-between items-center pb-4 mb-5 border-b border-slate-100 gap-2">
-                    <div>
-                        <h3 class="text-base font-bold text-slate-900">
-                            <i class="fa-solid fa-diagram-project text-blue-600 mr-2"></i>1. 가계 재무제표와 핵심 용어들의 유기적 연결 구조 (Why It Matters)
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">재무설계에서 개별 용어는 독립되어 있지 않고, 아래의 4단계 흐름에 따라 서로 맞물려 돌아갑니다.</p>
-                    </div>
-                    <span class="text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full border border-blue-200">
-                        선순환 메커니즘: 지출 통제 ➔ 잉여자금 창출 ➔ 순자산 증가 & 부채 경감
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
-                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 relative">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-extrabold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">연결고리 01</span>
-                            <i class="fa-solid fa-arrow-right text-slate-300 hidden md:inline"></i>
-                        </div>
-                        <h4 class="text-sm font-bold text-slate-900 mb-1.5">월간 현금흐름표 (유입·유출)</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-3">
-                            매월 들어오는 <strong>총수입(세후 급여)</strong>에서 숨만 쉬어도 나가는 <strong>고정지출(대출원리금·보험료)</strong>과 통제 가능한 <strong>변동지출(식비·용돈)</strong>을 뺍니다.
-                        </p>
-                        <div class="p-2.5 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-700">
-                            <strong>🔗 핵심 공식:</strong><br>
-                            총수입 - (고정지출 + 변동지출) = <span class="text-blue-600 font-bold">월 저축·투자 여력(잉여현금)</span>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 relative">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">연결고리 02</span>
-                            <i class="fa-solid fa-arrow-right text-slate-300 hidden md:inline"></i>
-                        </div>
-                        <h4 class="text-sm font-bold text-slate-900 mb-1.5">자산·부채 상태표로 이전</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-3">
-                            1단계에서 남은 <strong>저축·투자 여력</strong>은 파킹통장(<strong>유동자산</strong>), ISA·ETF(<strong>투자자산</strong>), 연금(<strong>은퇴자산</strong>)에 쌓이거나 <strong>대출 원금 상환</strong>에 쓰입니다.
-                        </p>
-                        <div class="p-2.5 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-700">
-                            <strong>🔗 상호작용:</strong><br>
-                            저축·상환 실행 ➔ <span class="text-emerald-600 font-bold">총자산 증가 또는 부채 감소</span> ➔ 내 진짜 재산인 <strong>순자산(자기자본) 상승!</strong>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 relative">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-extrabold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">연결고리 03</span>
-                            <i class="fa-solid fa-arrow-right text-slate-300 hidden md:inline"></i>
-                        </div>
-                        <h4 class="text-sm font-bold text-slate-900 mb-1.5">위기 방어력 (비상자금 & DSR)</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-3">
-                            <strong>변동지출을 다이어트</strong>하면 두 가지 효과가 동시에 일어납니다. ① 매월 필요한 필수생활비가 줄어들어 보유 현금으로 버틸 수 있는 기간(<strong>비상예비자금 지표</strong>)이 늘어나고, ② 남는 돈으로 대출원금을 갚으면 <strong>DSR(부채부담)</strong>이 낮아집니다.
-                        </p>
-                        <div class="p-2.5 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-700">
-                            <strong>🔗 상호작용:</strong><br>
-                            지출 절감 ➔ <span class="text-amber-700 font-bold">비상자금 버팀 개월 수 증가 + 소득절벽 적자폭 축소</span>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 relative">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-extrabold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">연결고리 04</span>
-                            <i class="fa-solid fa-check-double text-indigo-500"></i>
-                        </div>
-                        <h4 class="text-sm font-bold text-slate-900 mb-1.5">절세 & 리스크 헤지 완성</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-3">
-                            같은 투자라도 <strong>ISA·연금저축</strong>에서 운용하면 세금(15.4%)을 아껴 복리 수익률(<strong>BEP</strong>)이 높아집니다. 단, 휴직 등으로 <strong>결정세액(낼 세금)</strong>이 줄면 세액공제 환급도 줄어들므로 배우자 간 납입 명의 조정이 필수입니다.
-                        </p>
-                        <div class="p-2.5 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-700">
-                            <strong>🔗 상호작용:</strong><br>
-                            절세계좌 + 정기보험(<strong>리스크 헤지</strong>) ➔ <span class="text-indigo-600 font-bold">세후 실질수익 극대화 & 가계 파산 방지</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 섹션 2: AFPK 표준 재무비율 가이드라인 상세 해설표 -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-slate-100">
-                    <h3 class="text-base font-bold text-slate-900">
-                        <i class="fa-solid fa-ruler-combined text-blue-600 mr-2"></i>2. AFPK(공인재무설계사) 표준 재무비율 진단 기준 총람
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-1">한국FP협회(IFPK) 및 AFPK 재무설계 개론에서 가계의 재무 건전성을 판정할 때 사용하는 6대 공식 지표와 산출 근거입니다.</p>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs text-left">
-                        <thead class="bg-slate-800 text-white">
-                            <tr>
-                                <th class="py-3 px-4 w-44">재무비율 지표명</th>
-                                <th class="py-3 px-4 w-56">산출 공식 (Formula)</th>
-                                <th class="py-3 px-4 w-48">AFPK 표준 권장 기준</th>
-                                <th class="py-3 px-4">지표의 의미 및 다른 항목과의 연관성 해설</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200 text-slate-700">
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-3.5 px-4 font-bold text-slate-900">
-                                    ① 비상예비자금 지표<br>
-                                    <span class="text-[11px] font-normal text-slate-400">Emergency Fund Ratio</span>
-                                </td>
-                                <td class="py-3.5 px-4 font-mono text-[11px] bg-slate-50/60">
-                                    유동성 자산(현금·CMA)<br>÷ 월 필수지출(고정+변동+대출)
-                                </td>
-                                <td class="py-3.5 px-4">
-                                    <span class="font-bold text-emerald-700">• 맞벌이/일반: 3~6개월 치</span><br>
-                                    <span class="font-bold text-blue-700">• 외벌이/자영업: 6~12개월 이상</span>
-                                </td>
-                                <td class="py-3.5 px-4 leading-relaxed">
-                                    갑작스러운 실직, 휴직, 질병 등으로 소득이 끊겼을 때 <strong>기존 생활 수준을 몇 개월간 유지할 수 있는가</strong>를 나타냅니다. <strong>월 지출을 줄이거나 CMA 잔고를 늘리면</strong> 지표가 즉각 개선됩니다.
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-3.5 px-4 font-bold text-slate-900">
-                                    ② 부채부담 지표 (DSR)<br>
-                                    <span class="text-[11px] font-normal text-slate-400">Debt Service Ratio</span>
-                                </td>
-                                <td class="py-3.5 px-4 font-mono text-[11px] bg-slate-50/60">
-                                    (월 총부채 원리금 상환액<br>÷ 월 총수입) × 100
-                                </td>
-                                <td class="py-3.5 px-4">
-                                    <span class="font-bold text-emerald-700">• 적정 안전선: 30% 이하</span><br>
-                                    <span class="font-bold text-rose-600">• 위험 경고선: 40% 초과</span>
-                                </td>
-                                <td class="py-3.5 px-4 leading-relaxed">
-                                    매달 버는 소득 중 <strong>대출 원금과 이자를 갚는 데 얼마나 쓰이는지</strong> 보여줍니다. 대출액이 그대로여도 <strong>육아휴직·이직으로 분모(월 소득)가 줄어들면 DSR이 40% 이상으로 급등</strong>하여 가계 흑자가 마비될 수 있습니다.
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-3.5 px-4 font-bold text-slate-900">
-                                    ③ 총저축성향 지표<br>
-                                    <span class="text-[11px] font-normal text-slate-400">Savings Propensity</span>
-                                </td>
-                                <td class="py-3.5 px-4 font-mono text-[11px] bg-slate-50/60">
-                                    (월 저축 및 투자 총액<br>÷ 월 총수입) × 100
-                                </td>
-                                <td class="py-3.5 px-4">
-                                    <span class="font-bold text-blue-700">• 1인 가구: 50% 이상</span><br>
-                                    <span class="font-bold text-emerald-700">• 맞벌이 무자녀: 40~50%</span><br>
-                                    <span class="font-semibold text-slate-600">• 자녀양육/외벌이: 20~35%</span>
-                                </td>
-                                <td class="py-3.5 px-4 leading-relaxed">
-                                    현재 소득 중 미래 자산 형성을 위해 적립하는 비율입니다. <strong>소비성향 지표(지출 ÷ 소득)와 반비례</strong> 관계에 있으므로, 신용카드 대신 체크카드를 써서 변동지출을 통제하면 저축성향이 올라갑니다.
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-3.5 px-4 font-bold text-slate-900">
-                                    ④ 실물·금융 자산배분<br>
-                                    <span class="text-[11px] font-normal text-slate-400">Asset Allocation Ratio</span>
-                                </td>
-                                <td class="py-3.5 px-4 font-mono text-[11px] bg-slate-50/60">
-                                    (거주·실물 부동산 평가액<br>÷ 총자산) × 100
-                                </td>
-                                <td class="py-3.5 px-4">
-                                    <span class="font-bold text-emerald-700">• 부동산 비중: 70% 이하 권장</span><br>
-                                    <span class="font-bold text-blue-700">• 금융자산 비중: 30% 이상 권장</span>
-                                </td>
-                                <td class="py-3.5 px-4 leading-relaxed">
-                                    한국 가구는 총자산의 80~90% 이상이 아파트 등 부동산에 묶여 있는 경우가 많습니다. 부동산 비중이 지나치게 높으면 급전이 필요할 때 집을 당장 팔 수 없어 <strong>흑자 도산(유동성 위기)</strong>을 겪기 쉽습니다.
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-3.5 px-4 font-bold text-slate-900">
-                                    ⑤ 순자산비율 (자기자본비율)<br>
-                                    <span class="text-[11px] font-normal text-slate-400">Net Worth to Total Assets</span>
-                                </td>
-                                <td class="py-3.5 px-4 font-mono text-[11px] bg-slate-50/60">
-                                    [순자산(총자산 - 총부채)<br>÷ 총자산] × 100
-                                </td>
-                                <td class="py-3.5 px-4">
-                                    <span class="font-bold text-emerald-700">• 권장치: 50% 이상</span><br>
-                                    <span class="text-slate-500">(즉, 총부채비율 50% 미만)</span>
-                                </td>
-                                <td class="py-3.5 px-4 leading-relaxed">
-                                    전체 자산 중에서 빚(부채)을 뺀 <strong>순수 내 돈(순자산)이 차지하는 비중</strong>입니다. 주택 매수 직후에는 이 비율이 30~40%대로 낮아지므로, 중기적으로 대출 원금을 상환해 60% 이상으로 끌어올려야 안전합니다.
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-3.5 px-4 font-bold text-slate-900">
-                                    ⑥ 위험관리(보장성보험) 비율<br>
-                                    <span class="text-[11px] font-normal text-slate-400">Insurance Expense Ratio</span>
-                                </td>
-                                <td class="py-3.5 px-4 font-mono text-[11px] bg-slate-50/60">
-                                    (월 보장성 보험료 합계<br>÷ 월 총수입) × 100
-                                </td>
-                                <td class="py-3.5 px-4">
-                                    <span class="font-bold text-emerald-700">• 적정 범위: 월 소득의 5~8%</span><br>
-                                    <span class="text-rose-600">(10% 초과 시 보험료 다이어트)</span>
-                                </td>
-                                <td class="py-3.5 px-4 leading-relaxed">
-                                    질병·상해·사망 위험을 방어(헤지)하기 위한 비용입니다. 불필요한 만기환급형·중복 갱신형 특약으로 보험료가 8~10%를 넘어가면 오히려 저축 여력을 갉아먹으므로 <strong>실손+정기보험 위주로 리모델링</strong>해야 합니다.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 섹션 3: 카테고리별 재무용어 사전 & 연관성 검색기 -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 mb-5 border-b border-slate-100 gap-4">
-                    <div>
-                        <h3 class="text-base font-bold text-slate-900">
-                            <i class="fa-solid fa-magnifying-glass-plus text-blue-600 mr-2"></i>3. 알기 쉬운 재무설계 용어 사전 & 용어 간 연관 해설
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">궁금한 카테고리를 클릭하거나 검색창에 키워드(예: DSR, ISA, 결정세액, 헤지, CMA)를 입력해 보세요.</p>
-                    </div>
-
-                    <div class="relative w-full md:w-72">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                        <input type="text" id="dict-search-input" oninput="window.renderDictionary()" placeholder="용어 검색 (예: DSR, ISA, 통장쪼개기)" class="input-box w-full border border-slate-300 rounded-lg py-2 pl-8 pr-3 text-xs bg-slate-50">
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-2 mb-6">
-                    <button type="button" onclick="window.setDictFilter('all')" id="dict-btn-all" class="dict-filter-btn active text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700">
-                        전체 보기 (14)
-                    </button>
-                    <button type="button" onclick="window.setDictFilter('cashflow')" id="dict-btn-cashflow" class="dict-filter-btn text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700">
-                        💸 현금흐름 · 예산관리
-                    </button>
-                    <button type="button" onclick="window.setDictFilter('asset')" id="dict-btn-asset" class="dict-filter-btn text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700">
-                        🏦 자산 · 부채 · 대출
-                    </button>
-                    <button type="button" onclick="window.setDictFilter('tax')" id="dict-btn-tax" class="dict-filter-btn text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700">
-                        📈 투자 · 절세 · 연금
-                    </button>
-                    <button type="button" onclick="window.setDictFilter('risk')" id="dict-btn-risk" class="dict-filter-btn text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700">
-                        🛡️ 위기관리 · 보험 헤지
-                    </button>
-                </div>
-
-                <div id="dict-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-            </div>
-        </div>
-
-        <!-- TAB 5 (STEP 06): 맞춤형 추천 금융정책 & 지원제도 총람 -->
-        <div id="tab-5" class="tab-panel space-y-6" style="display: none;">
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-wrap justify-between items-center gap-4">
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="px-2.5 py-0.5 bg-emerald-600 text-white text-xs font-bold rounded">STEP 06 · 정책·제도 가이드</span>
-                        <h2 class="text-xl font-bold text-slate-900">생애주기 · 가구 상황별 대한민국 핵심 금융정책 & 지원제도 총람</h2>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-1">청년 자산형성부터 내 집 마련 정책모기지, 출산·육아 급여 특례, 절세 계좌, 서민·자영업 채무조정 제도까지 재무설계에 즉시 활용 가능한 주요 공적 제도를 안내합니다.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="window.filterPolicyByMyProfile()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow transition flex items-center cursor-pointer">
-                        <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>STEP 01 내 가구 유형 맞춤 정책 보기
-                    </button>
-                </div>
-            </div>
-
-            <!-- 상단 맞춤 정책 브리핑 배너 -->
-            <div id="policy-custom-banner" class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-5 rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="space-y-1">
-                    <div class="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span id="policy-banner-tag">현재 선택된 가구 유형 기반 핵심 정책 가이드</span>
-                    </div>
-                    <h3 id="policy-banner-title" class="text-base sm:text-lg font-bold">금융상품 가입 전 정부 지원제도와 비과세·저금리 특례 대상 여부를 가장 먼저 확인하세요!</h3>
-                    <p id="policy-banner-desc" class="text-xs text-slate-300 leading-relaxed">시중 은행의 일반 상품보다 정부 정책 금융(특례 대출, 매칭 적금, 세액공제)을 우선 활용하면 무위험 확정 수익률을 극대화하고 이자 비용을 대폭 낮출 수 있습니다.</p>
-                </div>
-                <div class="shrink-0 flex flex-wrap gap-2">
-                    <span class="text-xs bg-white/10 border border-white/20 px-3 py-1.5 rounded-lg">📌 복지로 · 금융감독원 파인(FINE) · 주택도시기금 기준</span>
-                </div>
-            </div>
-
-            <!-- 검색 및 분야별 필터 바 -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 mb-5 border-b border-slate-100 gap-4">
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" onclick="window.setPolicyFilter('all')" id="policy-btn-all" class="policy-filter-btn active text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700">
-                            전체 정책·제도 (16)
-                        </button>
-                        <button type="button" onclick="window.setPolicyFilter('youth')" id="policy-btn-youth" class="policy-filter-btn text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700">
-                            🌱 청년 · 종잣돈 형성
-                        </button>
-                        <button type="button" onclick="window.setPolicyFilter('housing')" id="policy-btn-housing" class="policy-filter-btn text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700">
-                            🏠 주거 · 내집마련 금융
-                        </button>
-                        <button type="button" onclick="window.setPolicyFilter('family')" id="policy-btn-family" class="policy-filter-btn text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700">
-                            👶 출산 · 육아 · 가계지원
-                        </button>
-                        <button type="button" onclick="window.setPolicyFilter('tax_retire')" id="policy-btn-tax_retire" class="policy-filter-btn text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700">
-                            💰 절세 · 연금 · 노후준비
-                        </button>
-                        <button type="button" onclick="window.setPolicyFilter('debt_welfare')" id="policy-btn-debt_welfare" class="policy-filter-btn text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700">
-                            🛟 부채경감 · 자영업 · 안전망
-                        </button>
-                    </div>
-
-                    <div class="relative w-full md:w-72">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                        <input type="text" id="policy-search-input" oninput="window.renderPolicies()" placeholder="정책 검색 (예: 청년도약, 신생아특례, 6+6, ISA)" class="input-box w-full border border-slate-300 rounded-lg py-2 pl-8 pr-3 text-xs bg-slate-50">
-                    </div>
-                </div>
-
-                <!-- 정책 카드 그리드 컨테이너 -->
-                <div id="policy-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- 5. 은행 스타일 푸터 -->
-    <footer class="bg-slate-900 text-slate-400 text-xs py-8 px-4 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <div class="text-white font-bold text-sm mb-1">AFPK Life-Cycle FinPlan | 디지털 WM 자산관리 시뮬레이터</div>
-                <p>본 시스템은 한국재무설계협회(IFPK) 표준 재무설계 6단계 프로세스 및 AFPK 재무비율 가이드라인을 준수하여 설계되었습니다.</p>
-                <p class="text-slate-500 mt-1">※ 시뮬레이션 결과 및 정책 안내는 입력된 가정치에 기반한 참고 자료이며, 실제 금융상품 가입·정책 신청 및 세무 신고 시 해당 기관 및 전문가와 확인하시기 바랍니다.</p>
-            </div>
-            <div class="text-right shrink-0">
-                <span class="inline-block bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">
-                    맞춤형 재무설계 & 정책가이드 통합 엔진 v4.2
-                </span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JAVASCRIPT 상세 비즈니스 로직 엔진 -->
-    <script>
-        var healthChartInstance = null;
-        var stressChartInstance = null;
-        var bepChartInstance = null;
-        var currentDictCategory = 'all';
-        var currentPolicyCategory = 'all';
-
-        // STEP 01 가구 유형별 메타데이터
-        var householdProfiles = {
-            student: { label: '대학생·취준생', recSave: 30, recEm: 3, policyCat: 'youth' },
-            single: { label: '1인 사회초년생', recSave: 50, recEm: 3, policyCat: 'youth' },
-            dink: { label: '맞벌이 무자녀(DINK)', recSave: 45, recEm: 3, policyCat: 'housing' },
-            single_income_married: { label: '외벌이 신혼가구', recSave: 35, recEm: 6, policyCat: 'housing' },
-            infant_family: { label: '영유아 양육 가구', recSave: 25, recEm: 6, policyCat: 'family' },
-            school_family: { label: '학령기 자녀 교육 가구', recSave: 25, recEm: 6, policyCat: 'family' },
-            freelancer: { label: '프리랜서·자영업 가구', recSave: 40, recEm: 6, policyCat: 'debt_welfare' },
-            single_parent: { label: '한부모·부양 가구', recSave: 20, recEm: 6, policyCat: 'family' },
-            retire_prep: { label: '은퇴 준비기 가구', recSave: 35, recEm: 6, policyCat: 'tax_retire' },
-            retired: { label: '은퇴·연금 생활기', recSave: 10, recEm: 12, policyCat: 'tax_retire' }
-        };
-
-        // STEP 05 금융 용어 사전 데이터
-        var financialDictionary = [
-            {
-                id: 'networth',
-                category: 'asset',
-                catLabel: '자산·부채·대출',
-                term: '순자산 (Net Worth / 자기자본)',
-                sub: '자산·부채 상태표의 핵심 결론',
-                desc: '내가 가진 모든 재산(총자산: 집, 예금, 주식 등)에서 내가 갚아야 할 모든 빚(총부채: 주담대, 신용대출, 카드값)을 빼고 남은 진짜 내 돈을 뜻합니다.',
-                relation: '🔗 [연관성] 7억 원짜리 아파트(총자산)가 있어도 주택담보대출(총부채)이 4.2억 원 있다면 실제 순자산은 2.8억 원입니다. 매월 현금흐름표에서 흑자(저축)를 내거나 대출 원금을 갚아나가면 순자산이 증가합니다.'
-            },
-            {
-                id: 'liquid',
-                category: 'asset',
-                catLabel: '자산·부채·대출',
-                term: '유동성 자산 & CMA (파킹통장)',
-                sub: '비상예비자금을 담아두는 그릇',
-                desc: '원금 손실 위험 없이 언제든 즉시 현금으로 꺼내 쓸 수 있는 자산입니다. 증권사 CMA나 은행 파킹통장은 하루만 맡겨도 연 2.5~3.2% 수준의 이자를 주는 대표적인 유동성 계좌입니다.',
-                relation: '🔗 [연관성] 유동성 자산은 [비상예비자금 지표]의 분자 역할을 합니다. 주식이나 부동산은 급할 때 바로 현금화하기 어렵거나 손해를 보고 팔아야 하므로 비상금은 반드시 유동성 자산(CMA)에 보관해야 합니다.'
-            },
-            {
-                id: 'fixed_var',
-                category: 'cashflow',
-                catLabel: '현금흐름·예산',
-                term: '고정지출 vs 변동지출',
-                sub: '월간 현금흐름표의 두 가지 지출 기둥',
-                desc: '고정지출은 대출 원리금, 보험료, 통신비, 관리비처럼 매달 숨만 쉬어도 똑같이 빠져나가는 돈이고, 변동지출은 식비, 외식비, 쇼핑, 부부 용돈처럼 내 의지로 아껴 쓸 수 있는 생활비입니다.',
-                relation: '🔗 [연관성] 단기간에 [저축성향]을 높이고 [소득 절벽 적자]를 막으려면 당장 줄이기 힘든 고정지출보다 변동지출(식비·용돈)과 중복 보험료를 먼저 다이어트해야 합니다.'
-            },
-            {
-                id: 'split_account',
-                category: 'cashflow',
-                catLabel: '현금흐름·예산',
-                term: '통장 쪼개기 (4통장 시스템)',
-                sub: '강제 저축과 지출 통제를 위한 현금 파이프라인',
-                desc: '목적에 따라 통장을 ① 급여통장(수입 집결), ② 고정지출 통장(자동이체용), ③ 변동생활비 통장(체크카드 연동), ④ 투자·예비 통장(CMA·ISA·연금) 4개로 분리해 돈의 꼬리표를 달아주는 기법입니다.',
-                relation: '🔗 [연관성] 신용카드를 쓰면 지출 통제가 안 되어 [총저축성향]이 떨어집니다. 4통장 시스템으로 변동생활비를 예산 한도 내에서만 쓰도록 격리하면 매월 목표 저축액을 100% 확정 지을 수 있습니다.'
-            },
-            {
-                id: 'dsr',
-                category: 'asset',
-                catLabel: '자산·부채·대출',
-                term: 'DSR (총부채원리금상환비율)',
-                sub: '소득 대비 빚 상환 부담을 재는 온도계',
-                desc: '가계가 벌어들이는 소득 중에서 모든 대출의 원금과 이자(원리금)를 갚는 데 쓰이는 비율입니다. AFPK에서는 월 소득 대비 원리금 비중을 30% 이하로 유지할 것을 권장합니다.',
-                relation: '🔗 [연관성] 대출 원리금(분자)이 월 220만 원으로 고정되어 있어도, 육아휴직이나 퇴직으로 월 소득(분모)이 750만 원에서 520만 원으로 줄어들면 DSR이 29.3%에서 42.3%로 급등하여 가계 현금흐름을 마비시킵니다.'
-            },
-            {
-                id: 'amortization',
-                category: 'asset',
-                catLabel: '자산·부채·대출',
-                term: '원리금균등분할상환 vs 중도상환',
-                sub: '대출을 갚아나가는 방식과 이자 절감 해법',
-                desc: '원리금균등상환은 매달 내는 (원금+이자) 합계액을 만기까지 똑같이 맞추는 방식입니다. 중도상환은 만기 전에 목돈으로 대출 원금 일부를 미리 갚아 버리는 것입니다.',
-                relation: '🔗 [연관성] 금리 4.3%인 대출 원금을 5,000만 원 중도상환하면 매년 215만 원(월 약 18만 원)의 이자가 확정적으로 사라집니다. 이는 연 4.3%짜리 무위험 비과세 예금에 가입한 것과 똑같은 재무 효과를 냅니다.'
-            },
-            {
-                id: 'income_cliff',
-                category: 'risk',
-                catLabel: '위기관리·보험',
-                term: '소득 절벽 (Income Cliff) & 크레바스',
-                sub: '생애 전환기에 찾아오는 현금흐름 급감 구간',
-                desc: '출산·육아휴직(맞벌이→외벌이 전환), 이직 공백기, 또는 정년퇴직 후 국민연금을 받기 전까지의 무소득 기간(은퇴 크레바스)처럼 가계 소득이 절벽처럼 뚝 떨어지는 현상입니다.',
-                relation: '🔗 [연관성] 소득 절벽 구간에는 기존 지출이 소득을 초과하여 매월 적자가 발생합니다. 이를 방어하기 위해 사전에 조성해 두는 전용 비상금이 바로 [완충 펀드(Buffer Fund)]입니다.'
-            },
-            {
-                id: 'bep',
-                category: 'tax',
-                catLabel: '투자·절세·연금',
-                term: '대출 상환 vs 투자 손익분기점 (BEP)',
-                sub: '잉여 자금을 어디에 넣을지 결정하는 기준선',
-                desc: '여유 자금으로 대출을 갚아 아끼는 [대출 금리]와, 투자를 해서 얻는 [세후 기대수익률]이 같아지는 지점입니다. 세후 투자수익률이 대출금리보다 높아야 투자가 유리합니다.',
-                relation: '🔗 [연관성] 일반 계좌에서는 투자 수익에서 세금(15.4%)을 떼기 때문에 대출 금리를 이기기 어렵지만, [중개형 ISA]를 통해 세금을 없애면 세후 수익률이 높아져 투자 우위(BEP 돌파)를 달성하기 쉬워집니다.'
-            },
-            {
-                id: 'isa',
-                category: 'tax',
-                catLabel: '투자·절세·연금',
-                term: '중개형 ISA (개인종합자산관리계좌)',
-                sub: '만능 절세 통장 · 3~5년 중기 목돈 마련의 핵심',
-                desc: '하나의 계좌에서 국내 상장 주식, ETF, 채권 등을 직접 운용하면서, 만기(3년 이상) 시 순수익 200만 원(서민형 400만 원)까지 세금을 한 푼도 안 내는 비과세 계좌입니다. 초과 수익도 15.4% 대신 9.9%로 저율 분리과세됩니다.',
-                relation: '🔗 [연관성] 부부가 각자 개설하면 비과세 한도가 합산 400만 원(서민형 최대 800만 원)으로 2배가 됩니다. 3년 의무가입 기간 동안 모은 목돈을 만기 해지하여 [주담대 원금 중도상환] 재원으로 쓰면 절세와 부채 감축을 동시에 달성합니다.'
-            },
-            {
-                id: 'etf_weighted',
-                category: 'tax',
-                catLabel: '투자·절세·연금',
-                term: 'ETF (상장지수펀드) & 가중평균 기대수익률',
-                sub: '분산 투자와 포트폴리오 수익률 계산법',
-                desc: 'ETF는 우량 주식이나 국공채 수십~수백 개를 하나로 묶어 주식처럼 쉽게 사고팔 수 있게 만든 펀드입니다. 가중평균 수익률은 각 자산의 투자 비중(%)과 기대수익률을 곱해서 합산한 전체 포트폴리오의 예상 수익률입니다.',
-                relation: '🔗 [연관성] 남편이 적극투자형(배당성장주 선호)이고 아내가 안정형(예금 선호)일 때, 주식형 ETF 60% + 단기채권 ETF 40%로 섞으면 부부의 성향을 모두 만족시키면서 연 5.2% 수준의 안정적 가중평균 수익률을 얻을 수 있습니다.'
-            },
-            {
-                id: 'pension_irp',
-                category: 'tax',
-                catLabel: '투자·절세·연금',
-                term: '연금저축펀드 & 개인형 IRP',
-                sub: '노후 준비와 연말정산 세액공제를 동시에 잡는 계좌',
-                desc: '만 55세 이후 연금 수령을 목적으로 납입하는 절세 계좌입니다. 연금저축은 연 600만 원까지, IRP를 합치면 연간 최대 900만 원까지 납입액의 13.2% 또는 16.5%를 연말정산 때 현금으로 돌려받습니다.',
-                relation: '🔗 [연관성] 총급여 5,500만 원 이하는 16.5%(최대 148.5만 원), 초과는 13.2%(최대 118.8만 원)를 환급받습니다. 단, 중도 해지 시 기타소득세(16.5%)를 물어야 하므로 단기 비상금(CMA)이 충분히 확보된 상태에서 납입해야 합니다.'
-            },
-            {
-                id: 'tax_credit_trap',
-                category: 'tax',
-                catLabel: '투자·절세·연금',
-                term: '세액공제 vs 결정세액 (공제 누락 리스크)',
-                sub: '육아휴직·휴직 부부가 가장 많이 놓치는 세무 함정',
-                desc: '결정세액은 내가 1년 동안 국가에 최종적으로 내야 할 소득세 총액이고, 세액공제는 그 세금을 깎아주는 혜택입니다. 중요 원칙은 "내가 낼 세금(결정세액)보다 더 많은 돈을 환급받을 수는 없다"는 점입니다.',
-                relation: '🔗 [연관성] 육아휴직 급여는 비과세 소득입니다. 따라서 아내가 육아휴직에 들어가면 과세 급여가 급감해 결정세액이 0원에 가까워집니다. 이때 아내 명의로 연금저축을 넣으면 16.5% 공제를 못 받는 [공제 누락]이 생기므로, 소득이 유지되는 남편 명의로 집중 납입해야 합니다.'
-            },
-            {
-                id: 'hedge',
-                category: 'risk',
-                catLabel: '위기관리·보험',
-                term: '리스크 헤지 (Risk Hedge)',
-                sub: '가계 파산을 막는 안전 울타리 치기',
-                desc: '금융에서 헤지(Hedge)란 예상치 못한 큰 위험(사고, 질병, 사망, 금리 급등 등)이 닥쳤을 때 발생할 치명적인 금전적 손실을 미리 소액의 비용으로 방어하거나 상쇄해 두는 안전장치를 뜻합니다.',
-                relation: '🔗 [연관성] 대출이 4억 원 있는 가구에서 주 소득자인 가장이 유고(사망·고도후유장해)되면 소득이 끊겨 집이 경매에 넘어갈 위험에 처합니다. 이를 월 3만 원대의 정기보험(사망보장 3억)으로 방어하는 것이 대표적인 가계 리스크 헤지입니다.'
-            },
-            {
-                id: 'term_life',
-                category: 'risk',
-                catLabel: '위기관리·보험',
-                term: '정기보험 vs 종신보험',
-                sub: '가성비 높은 사망보장 설계의 핵심 차이',
-                desc: '종신보험은 죽을 때까지 평생 사망을 보장하는 대신 월 보험료가 20~40만 원대로 매우 비쌉니다. 반면 정기보험은 "자녀가 성인이 되고 대출을 다 갚는 60세까지만" 기간을 정해 보장하므로 월 3~4만 원대로 1/5 수준에 불과합니다.',
-                relation: '🔗 [연관성] 비싼 종신보험이나 불필요한 갱신형 특약을 해지·조정하여 [고정지출]을 아끼고, 저렴한 정기보험으로 대출 상환기만 탄탄하게 헤지한 뒤 남는 차액을 [ISA나 연금]에 투자하는 것이 AFPK 표준 설계의 정석입니다.'
-            }
-        ];
-
-        // STEP 06 추천 금융정책 및 제도 데이터
-        var financialPolicies = [
-            {
-                category: 'youth',
-                catLabel: '청년 · 종잣돈 형성',
-                badgeColor: 'bg-sky-50 text-sky-700 border-sky-200',
-                title: '청년도약계좌 (정부기여금 + 비과세)',
-                target: '만 19~34세 청년 (개인소득 7,500만 이하 & 가구 중위 250% 이하)',
-                benefit: '월 최대 70만 원 납입 시 정부기여금 매칭 지원 + 이자소득 비과세(15.4% 면제)로 만기 5년 시 약 5,000만 원 목돈 형성 (연 환산 수익률 8~9%대 효과)',
-                tip: '💡 [재무설계 활용 팁] 육아휴직 급여나 군 장병 급여만 있는 경우에도 가입 가능하며, 3년 이상 유지 시 중도해지하더라도 비과세와 기여금 일부(60%)를 인정받을 수 있도록 제도가 개선되었습니다.'
-            },
-            {
-                category: 'youth',
-                catLabel: '청년 · 종잣돈 형성',
-                badgeColor: 'bg-sky-50 text-sky-700 border-sky-200',
-                title: '청년 주택드림 청약통장 & 연계대출',
-                target: '만 19~34세 무주택 청년 (연소득 5,000만 원 이하)',
-                benefit: '최대 연 4.5% 금리 + 이자소득 비과세 + 소득공제(연 300만 한도). 청약 당첨 시 분양가 80%까지 최저 연 2.2%대 저금리 주담대 연계 지원',
-                tip: '💡 [재무설계 활용 팁] 기존 일반 주택청약종합저축 가입자도 요건 충족 시 전환 가입이 가능하므로 사회초년생과 대학생의 1순위 필수 통장입니다.'
-            },
-            {
-                category: 'youth',
-                catLabel: '청년 · 종잣돈 형성',
-                badgeColor: 'bg-sky-50 text-sky-700 border-sky-200',
-                title: '청년내일저축계좌 (근로빈곤층 자산형성)',
-                target: '근로 중인 만 19~34세 청년 (기준 중위소득 100% 이하)',
-                benefit: '본인이 월 10만 원 저축 시 정부지원금 월 10만 원(중위 50% 이하는 월 30만 원)을 매칭 적립하여 3년 만기 시 720만~1,440만 원 + 이자 수령',
-                tip: '💡 [재무설계 활용 팁] 매년 5월경 복지로(Bokjiro)를 통해 모집하며, 근로소득장려금(EITC)과 중복 수혜가 가능해 초기 시드머니 마련에 가장 강력합니다.'
-            },
-            {
-                category: 'youth',
-                catLabel: '청년 · 종잣돈 형성',
-                badgeColor: 'bg-sky-50 text-sky-700 border-sky-200',
-                title: '취업 후 상환 학자금대출 이자면제 & 유예',
-                target: '대학생 · 미취업 청년 · 육아휴직자 · 저소득 사회초년생',
-                benefit: '기준 중위소득 이하 구간 및 육아휴직 기간 중 발생한 학자금대출 이자 전액 면제 및 원리금 상환 유예 신청 가능',
-                tip: '💡 [재무설계 활용 팁] 한국장학재단 앱에서 상환유예 및 이자면제를 신청하면 사회초년기나 휴직기의 월 고정 부채상환액(DSR)을 즉시 낮출 수 있습니다.'
-            },
-            {
-                category: 'housing',
-                catLabel: '주거 · 내집마련 금융',
-                badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                title: '신생아 특례 디딤돌(매입) · 버팀목(전세) 대출',
-                target: '대출 신청일 기준 2년 내 출산(입양)한 무주택 가구 (부부합산 소득 요건 대폭 완화)',
-                benefit: '주택 매입 시 최대 5억 원 한도 내 최저 연 1.6~3.3%대 특례 금리 적용 (기존 고금리 주담대를 저금리로 갈아타는 대환대출도 가능)',
-                tip: '💡 [재무설계 활용 팁] 공모전 케이스와 같은 출산 예정 부부가 시중은행 4.3% 주담대를 신생아 특례 대환대출로 갈아타면 매월 이자 비용을 40~60만 원 이상 즉각 절감할 수 있습니다.'
-            },
-            {
-                category: 'housing',
-                catLabel: '주거 · 내집마련 금융',
-                badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                title: '내집마련 디딤돌 대출 & 신혼부부 전용 주담대',
-                target: '부부합산 연소득 6,000만 원 이하(신혼·2자녀 이상 7,000만~8,500만 이하) 무주택 세대주',
-                benefit: '연 2~3%대 고정/변동 저금리로 최대 2.5억~4억 원까지 주택 구입 자금 지원 (LTV 최대 70~80%)',
-                tip: '💡 [재무설계 활용 팁] 생애최초 주택구입자 및 청약저축 장기 가입자는 우대금리(0.2~0.5%p)가 추가 적용되므로 청약통장을 해지하지 말고 유지해야 합니다.'
-            },
-            {
-                category: 'housing',
-                catLabel: '주거 · 내집마련 금융',
-                badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                title: '청년 · 신혼부부 버팀목 전세자금대출 & 월세 세액공제',
-                target: '무주택 청년 및 신혼부부 임차 가구',
-                benefit: '전세보증금의 80% 이내에서 연 1.8~2.9%대 초저금리 지원. 월세 거주 시 연 1,000만 원 한도 내 월세액의 15~17% 연말정산 세액공제',
-                tip: '💡 [재무설계 활용 팁] 전세 사기 예방을 위해 HUG/HF 전세보증금반환보증 보험 가입이 필수이며, 지자체별 전세보증보험료 지원사업(최대 30만 원)을 꼭 신청하세요.'
-            },
-            {
-                category: 'family',
-                catLabel: '출산 · 육아 · 가계지원',
-                badgeColor: 'bg-rose-50 text-rose-700 border-rose-200',
-                title: '6+6 부모육아휴직제 & 육아휴직 급여 상한 인상',
-                target: '생후 18개월 이내 자녀를 둔 맞벌이 근로자 부부',
-                benefit: '부모가 순차 또는 동시에 육아휴직 사용 시 첫 6개월간 통상임금의 100%(월 상한 최대 200만~450만 원 단계적 상승) 지급 및 사후지급금 폐지(전액 휴직 중 지급)',
-                tip: '💡 [재무설계 활용 팁] STEP 02 스트레스 테스트에서 확인했듯, 6+6 특례를 활용하면 휴직 초반 6개월의 소득 절벽을 크게 완화할 수 있으며 육아휴직 급여는 전액 비과세입니다.'
-            },
-            {
-                category: 'family',
-                catLabel: '출산 · 육아 · 가계지원',
-                badgeColor: 'bg-rose-50 text-rose-700 border-rose-200',
-                title: '첫만남이용권(200~300만) & 부모급여(월 100만)',
-                target: '출산 가구 및 만 0세~1세 영아 양육 가구',
-                benefit: '출산 시 첫째 200만 원·둘째 이상 300만 원 바우처 지급 + 만 0세 월 100만 원, 만 1세 월 50만 원 부모급여 현금(또는 보육료) 지급 + 아동수당 월 10만 원 별도',
-                tip: '💡 [재무설계 활용 팁] 영아기 2년간 지급되는 부모급여(총 1,800만 원)를 생활비에 섞어 쓰지 말고 자녀 명의 계좌나 부부 비상예비자금(CMA)에 별도 관리하면 육아기 유동성이 탄탄해집니다.'
-            },
-            {
-                category: 'family',
-                catLabel: '출산 · 육아 · 가계지원',
-                badgeColor: 'bg-rose-50 text-rose-700 border-rose-200',
-                title: '기업 출산지원금 전액 비과세 & 혼인·출산 증여재산공제',
-                target: '출산 근로자 및 결혼·출산 자녀에게 자금을 지원하는 부모/신혼부부',
-                benefit: '회사가 지급하는 출산지원금은 한도 없이 근로소득 전액 비과세. 직계존속으로부터 증여 시 기본 5,000만 원 외에 혼인·출산 특례로 1억 원 추가 비과세(신혼부부 합산 최대 3억 원 무세금 증여 가능)',
-                tip: '💡 [재무설계 활용 팁] 주택 구입이나 대출 상환을 위해 양가 부모님께 자금 지원을 받을 때 혼인·출산 증여재산공제를 활용하면 증여세 부담 없이 종잣돈을 마련할 수 있습니다.'
-            },
-            {
-                category: 'tax_retire',
-                catLabel: '절세 · 연금 · 노후준비',
-                badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                title: '중개형 ISA (개인종합자산관리계좌) 세제 혜택',
-                target: '만 19세 이상 거주자 (또는 만 15~18세 근로소득자)',
-                benefit: '연 2,000만 원(총 1억) 납입 한도. 계좌 내 이익과 손실을 합산(손익통산)하여 순이익 200만 원(서민·농어민형 400만 원)까지 비과세, 초과분은 9.9% 분리과세',
-                tip: '💡 [재무설계 활용 팁] 만기(3년 이상) 자금을 해지 후 60일 이내에 연금저축이나 IRP 계좌로 이전하면 이전 금액의 10%(최대 300만 원)를 추가 세액공제 받을 수 있습니다.'
-            },
-            {
-                category: 'tax_retire',
-                catLabel: '절세 · 연금 · 노후준비',
-                badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                title: '연금저축 · 개인형 IRP 세액공제 (연 900만 한도)',
-                target: '근로소득자 및 종합소득 신고 자영업자·프리랜서',
-                benefit: '연금저축(연 600만 한도) + IRP 합산 연 900만 원까지 납입액의 16.5%(총급여 5,500만 이하) 또는 13.2%(초과자) 세액공제 환급',
-                tip: '💡 [재무설계 활용 팁] STEP 04에서 진단했듯이, 육아휴직 등으로 당해 연도 결정세액이 0원인 배우자 명의로는 납입을 멈추고 소득이 있는 배우자 계좌에 집중 납입해야 공제 누락을 막습니다.'
-            },
-            {
-                category: 'tax_retire',
-                catLabel: '절세 · 연금 · 노후준비',
-                badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                title: '주택연금 (역모기지론) & 국민연금 추납·연기제도',
-                target: '만 55세 이상 주택 보유 은퇴준비자 및 국민연금 가입 이력자',
-                benefit: '거주 중인 주택(공시가격 12억 이하)을 담보로 평생 노후 생활비를 연금으로 수령. 경력단절·휴직 기간의 국민연금 추후납부(추납) 시 연금 수령액 대폭 증액',
-                tip: '💡 [재무설계 활용 팁] 부동산 비중이 80% 이상인 한국 은퇴 가구가 집을 팔지 않고도 현금흐름을 창출할 수 있는 핵심 제도입니다.'
-            },
-            {
-                category: 'debt_welfare',
-                catLabel: '부채경감 · 자영업 · 안전망',
-                badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
-                title: '주택담보대출 중도상환수수료 면제 (3년 경과 시) & 금리인하요구권',
-                target: '주택담보대출 및 신용대출 보유 차주 전체',
-                benefit: '대부분의 은행 주담대는 대출 실행 후 3년이 경과하면 중도상환수수료가 완전 면제됨. 승진·이직·소득증가·자산증가 시 금리인하요구권 비대면 신청 가능',
-                tip: '💡 [재무설계 활용 팁] STEP 03에서 ISA 3년 만기 목돈으로 대출 원금을 갚는 전략이 유효한 이유가 바로 "대출 3년 경과 시 중도상환수수료 0원" 규칙과 맞물리기 때문입니다.'
-            },
-            {
-                category: 'debt_welfare',
-                catLabel: '부채경감 · 자영업 · 안전망',
-                badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
-                title: '소상공인·자영업자 노란우산공제 (소득공제 + 압류방지)',
-                target: '소기업 · 소상공인 · 개인사업자 · 프리랜서',
-                benefit: '사업소득 규모에 따라 연간 최대 500만~600만 원까지 소득공제 혜택 제공 + 폐업 시 퇴직금 역할 및 법적 압류 절대 불가 안전망 계좌',
-                tip: '💡 [재무설계 활용 팁] 퇴직금이 없는 자영업자와 프리랜서는 연금저축(세액공제)과 노란우산공제(소득공제)를 병행하면 5월 종합소득세 부담을 획기적으로 줄일 수 있습니다.'
-            },
-            {
-                category: 'debt_welfare',
-                catLabel: '부채경감 · 자영업 · 안전망',
-                badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
-                title: '근로장려금(EITC) · 자녀장려금(CTC) 및 서민금융 새희망홀씨',
-                target: '저소득 근로자·사업자 가구 및 중저신용 서민 가구',
-                benefit: '맞벌이 가구 연소득 4,000만 원 미만 시 최대 330만 원 근로장려금 및 자녀 1인당 최대 100만 원 자녀장려금 현금 지급 (고금리 대출자는 햇살론·신용회복위원회 채무조정 활용)',
-                tip: '💡 [재무설계 활용 팁] 매년 5월 정기 신청 기간에 국세청 홈택스(손택스)에서 신청하며, 수령한 장려금은 고금리 소액 부채 상환이나 비상예비자금 확충에 최우선 배정하세요.'
-            }
-        ];
-
-        window.jumpToDict = function(category) {
-            window.switchTab(4);
-            window.setDictFilter(category);
-            var inputEl = document.getElementById('dict-search-input');
-            if (inputEl) inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        };
-
-        window.setDictFilter = function(category) {
-            currentDictCategory = category;
-            document.querySelectorAll('.dict-filter-btn').forEach(function(btn) { btn.classList.remove('active'); });
-            var activeBtn = document.getElementById('dict-btn-' + category);
-            if (activeBtn) activeBtn.classList.add('active');
-            window.renderDictionary();
-        };
-
-        window.renderDictionary = function() {
-            var searchEl = document.getElementById('dict-search-input');
-            var query = (searchEl ? searchEl.value : '').trim().toLowerCase();
-            var container = document.getElementById('dict-cards-container');
-            if (!container) return;
-
-            var filtered = financialDictionary.filter(function(item) {
-                var matchCat = currentDictCategory === 'all' || item.category === currentDictCategory;
-                var matchQuery = !query ||
-                    item.term.toLowerCase().includes(query) ||
-                    item.desc.toLowerCase().includes(query) ||
-                    item.relation.toLowerCase().includes(query);
-                return matchCat && matchQuery;
-            });
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="col-span-2 py-12 text-center text-slate-400 text-sm">검색하신 키워드에 해당하는 용어가 없습니다. 다른 검색어를 입력하거나 [전체 보기]를 눌러주세요.</div>';
-                return;
-            }
-
-            var html = '';
-            filtered.forEach(function(item) {
-                var badgeColor = 'bg-blue-50 text-blue-700 border-blue-200';
-                if (item.category === 'cashflow') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                if (item.category === 'tax') badgeColor = 'bg-indigo-50 text-indigo-700 border-indigo-200';
-                if (item.category === 'risk') badgeColor = 'bg-amber-50 text-amber-800 border-amber-200';
-
-                html += '<div class="p-5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-white hover:shadow-md transition flex flex-col justify-between">' +
-                    '<div>' +
-                        '<div class="flex justify-between items-start gap-2 mb-2">' +
-                            '<div>' +
-                                '<span class="inline-block text-[11px] font-bold px-2 py-0.5 rounded border ' + badgeColor + ' mb-1.5">' + item.catLabel + '</span>' +
-                                '<h4 class="text-base font-extrabold text-slate-900">' + item.term + '</h4>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="text-xs font-semibold text-slate-400 mb-2.5">' + item.sub + '</div>' +
-                        '<p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3.5">' + item.desc + '</p>' +
-                    '</div>' +
-                    '<div class="p-3 rounded-lg bg-blue-50/70 border border-blue-100 text-xs text-slate-700 leading-relaxed">' + item.relation + '</div>' +
-                '</div>';
-            });
-            container.innerHTML = html;
-        };
-
-        // STEP 06 정책 렌더링 및 필터링
-        window.setPolicyFilter = function(category) {
-            currentPolicyCategory = category;
-            document.querySelectorAll('.policy-filter-btn').forEach(function(btn) { btn.classList.remove('active'); });
-            var activeBtn = document.getElementById('policy-btn-' + category);
-            if (activeBtn) activeBtn.classList.add('active');
-            window.renderPolicies();
-        };
-
-        window.filterPolicyByMyProfile = function() {
-            var hhType = document.getElementById('t1-household-type').value;
-            var targetCat = 'all';
-            var hhLabel = '맞춤형 가구';
-
-            if (hhType === 'custom_hh') {
-                hhLabel = document.getElementById('t1-custom-hh-name').value.trim() || '기타 직접입력 가구';
-                targetCat = 'all';
-            } else if (householdProfiles[hhType]) {
-                hhLabel = householdProfiles[hhType].label;
-                targetCat = householdProfiles[hhType].policyCat;
-            }
-
-            window.switchTab(5);
-            window.setPolicyFilter(targetCat);
-            document.getElementById('policy-banner-tag').innerText = '[' + hhLabel + '] 유형에 추천하는 우선순위 정책 카테고리 필터 적용됨';
-            document.getElementById('policy-banner-title').innerText = "현재 설정하신 '" + hhLabel + "' 상태에서 가장 먼저 검토해야 할 핵심 금융정책 및 지원제도입니다.";
-        };
-
-        window.renderPolicies = function() {
-            var searchEl = document.getElementById('policy-search-input');
-            var query = (searchEl ? searchEl.value : '').trim().toLowerCase();
-            var container = document.getElementById('policy-cards-container');
-            if (!container) return;
-
-            var filtered = financialPolicies.filter(function(item) {
-                var matchCat = currentPolicyCategory === 'all' || item.category === currentPolicyCategory;
-                var matchQuery = !query ||
-                    item.title.toLowerCase().includes(query) ||
-                    item.target.toLowerCase().includes(query) ||
-                    item.benefit.toLowerCase().includes(query) ||
-                    item.tip.toLowerCase().includes(query);
-                return matchCat && matchQuery;
-            });
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="col-span-3 py-12 text-center text-slate-400 text-sm">검색하신 키워드에 해당하는 금융정책·제도가 없습니다. [전체 정책·제도] 버튼을 눌러 확인해 보세요.</div>';
-                return;
-            }
-
-            var html = '';
-            filtered.forEach(function(item) {
-                html += '<div class="p-5 rounded-xl border border-slate-200 bg-white hover:shadow-md transition flex flex-col justify-between">' +
-                    '<div>' +
-                        '<div class="flex items-center justify-between gap-2 mb-2.5">' +
-                            '<span class="text-[11px] font-bold px-2.5 py-0.5 rounded border ' + item.badgeColor + '">' + item.catLabel + '</span>' +
-                            '<i class="fa-solid fa-bookmark text-slate-300"></i>' +
-                        '</div>' +
-                        '<h4 class="text-base font-extrabold text-slate-900 mb-2 leading-snug">' + item.title + '</h4>' +
-                        '<div class="text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-slate-600 mb-3">' +
-                            '<strong class="text-slate-800">🎯 지원 대상:</strong> ' + item.target +
-                        '</div>' +
-                        '<p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">' +
-                            '<strong class="text-blue-700">✨ 핵심 혜택:</strong> ' + item.benefit +
-                        '</p>' +
-                    '</div>' +
-                    '<div class="p-3 rounded-lg bg-emerald-50/70 border border-emerald-100 text-xs text-slate-700 leading-relaxed">' + item.tip + '</div>' +
-                '</div>';
-            });
-            container.innerHTML = html;
-        };
-
-        window.highlightPresetButton = function(activeId) {
-            document.querySelectorAll('.preset-btn').forEach(function(btn) { btn.classList.remove('active'); });
-            var target = document.getElementById(activeId);
-            if (target) target.classList.add('active');
-        };
-
-        window.loadPreset = function(type) {
-            if (type === 'custom') {
-                window.highlightPresetButton('btn-preset-custom');
-                document.getElementById('t1-household-type').value = 'dink';
-                document.getElementById('t1-custom-hh-box').style.display = 'none';
-                document.getElementById('t1-income').value = 450;
-                document.getElementById('t1-loan-pmt').value = 80;
-                document.getElementById('t1-fixed').value = 70;
-                document.getElementById('t1-variable').value = 140;
-                document.getElementById('t1-total-asset').value = 35000;
-                document.getElementById('t1-real-estate').value = 22000;
-                document.getElementById('t1-liquid').value = 1200;
-                document.getElementById('t1-total-debt').value = 12000;
-
-                document.getElementById('t2-event-type').value = 'custom_event';
-                document.getElementById('t2-current-income').value = 450;
-                document.getElementById('t2-new-income').value = 280;
-                document.getElementById('t2-expenses').value = 290;
-                document.getElementById('t2-extra-exp').value = 20;
-                document.getElementById('t2-duration').value = 12;
-                document.getElementById('t2-current-buffer').value = 1200;
-                document.getElementById('t2-expense-cut').value = 40;
-                document.getElementById('t2-cut-label').innerText = '월 40만 원 절감';
-
-                document.getElementById('t3-portfolio-preset').value = 'balanced';
-                document.getElementById('t3-pmt').value = 100;
-                document.getElementById('t3-loan-rate').value = 4.3;
-                document.getElementById('t3-inv-rate').value = 5.2;
-                document.getElementById('t3-years').value = 10;
-                document.getElementById('t3-tax-mode').value = 'isa_couple';
-
-                document.getElementById('t4-family-mode').value = 'couple';
-                document.getElementById('t4-salary-h').value = 5200;
-                document.getElementById('t4-salary-w').value = 4600;
-                document.getElementById('t4-leave-check').checked = false;
-                document.getElementById('t4-pension-monthly').value = 40;
-                document.getElementById('t4-irp-monthly').value = 25;
-
-                document.getElementById('active-profile-name').innerText = '고객 직접 입력 모드 (나만의 재무 데이터 분석)';
-            } else if (type === 'case2') {
-                window.highlightPresetButton('btn-preset-case2');
-                document.getElementById('t1-household-type').value = 'dink';
-                document.getElementById('t1-custom-hh-box').style.display = 'none';
-                document.getElementById('t1-income').value = 750;
-                document.getElementById('t1-loan-pmt').value = 220;
-                document.getElementById('t1-fixed').value = 105;
-                document.getElementById('t1-variable').value = 250;
-                document.getElementById('t1-total-asset').value = 74300;
-                document.getElementById('t1-real-estate').value = 70000;
-                document.getElementById('t1-liquid').value = 1500;
-                document.getElementById('t1-total-debt').value = 42400;
-
-                document.getElementById('t2-event-type').value = 'parental';
-                document.getElementById('t2-current-income').value = 750;
-                document.getElementById('t2-new-income').value = 520;
-                document.getElementById('t2-expenses').value = 575;
-                document.getElementById('t2-extra-exp').value = 45;
-                document.getElementById('t2-duration').value = 12;
-                document.getElementById('t2-current-buffer').value = 1500;
-                document.getElementById('t2-expense-cut').value = 77;
-                document.getElementById('t2-cut-label').innerText = '월 77만 원 절감';
-
-                document.getElementById('t3-portfolio-preset').value = 'balanced';
-                document.getElementById('t3-pmt').value = 100;
-                document.getElementById('t3-loan-rate').value = 4.3;
-                document.getElementById('t3-inv-rate').value = 5.2;
-                document.getElementById('t3-years').value = 10;
-                document.getElementById('t3-tax-mode').value = 'isa_couple';
-
-                document.getElementById('t4-family-mode').value = 'parental_leave_couple';
-                document.getElementById('t4-salary-h').value = 5800;
-                document.getElementById('t4-salary-w').value = 4900;
-                document.getElementById('t4-leave-check').checked = true;
-                document.getElementById('t4-pension-monthly').value = 50;
-                document.getElementById('t4-irp-monthly').value = 30;
-
-                document.getElementById('active-profile-name').innerText = '[공모전 케이스] 김민수(34)·이수진(32) 맞벌이 신혼부부 (출산·육아휴직 대비)';
-            }
-
-            window.toggleSpouseInput();
-            window.applyPortfolioPreset(true);
-            window.switchTab(window.currentActiveTab);
-        };
-
-        window.handleHouseholdTypeChange = function() {
-            var hhType = document.getElementById('t1-household-type').value;
-            var customBox = document.getElementById('t1-custom-hh-box');
-            if (hhType === 'custom_hh') {
-                customBox.style.display = 'block';
-            } else {
-                customBox.style.display = 'none';
-            }
-            window.calculateHealth();
-        };
-
-        // STEP 01 계산 엔진
-        window.calculateHealth = function() {
-            var hhType = document.getElementById('t1-household-type').value;
-            var income = parseFloat(document.getElementById('t1-income').value) || 0;
-            var loanPmt = parseFloat(document.getElementById('t1-loan-pmt').value) || 0;
-            var fixed = parseFloat(document.getElementById('t1-fixed').value) || 0;
-            var variable = parseFloat(document.getElementById('t1-variable').value) || 0;
-            var totalAsset = parseFloat(document.getElementById('t1-total-asset').value) || 1;
-            var realEstate = parseFloat(document.getElementById('t1-real-estate').value) || 0;
-            var liquid = parseFloat(document.getElementById('t1-liquid').value) || 0;
-            var totalDebt = parseFloat(document.getElementById('t1-total-debt').value) || 0;
-
-            var totalLiving = fixed + variable + loanPmt;
-            var monthlySavings = Math.max(0, income - totalLiving);
-            var netWorth = totalAsset - totalDebt;
-            var equityRatio = ((netWorth / totalAsset) * 100).toFixed(1);
-
-            var recSaveMin = 40;
-            var recEmTarget = 3;
-            var hhLabel = '맞벌이 무자녀';
-
-            if (hhType === 'custom_hh') {
-                var customName = document.getElementById('t1-custom-hh-name').value.trim();
-                hhLabel = customName ? customName : '기타 사용자 정의 가구';
-                recSaveMin = parseFloat(document.getElementById('t1-custom-save-rate').value) || 35;
-                recEmTarget = parseFloat(document.getElementById('t1-custom-em-months').value) || 6;
-            } else if (householdProfiles[hhType]) {
-                hhLabel = householdProfiles[hhType].label;
-                recSaveMin = householdProfiles[hhType].recSave;
-                recEmTarget = householdProfiles[hhType].recEm;
-            }
-
-            var scoreCount = 0;
-
-            var emMonths = totalLiving > 0 ? (liquid / totalLiving).toFixed(1) : 0;
-            var emBadge, emColor, emBarColor, emDesc;
-            if (parseFloat(emMonths) >= recEmTarget * 1.5 || parseFloat(emMonths) >= 6) {
-                emBadge = '양호 (안전)'; emColor = 'text-emerald-700 bg-emerald-50 border-emerald-200'; emBarColor = 'bg-emerald-500';
-                emDesc = hhLabel + ' 권장 비상예비자금(' + recEmTarget + '개월 치 이상)을 충분히 확보하고 있습니다.';
-                scoreCount++;
-            } else if (parseFloat(emMonths) >= recEmTarget) {
-                emBadge = '보통 (적정)'; emColor = 'text-blue-700 bg-blue-50 border-blue-200'; emBarColor = 'bg-blue-500';
-                emDesc = '최소 권장치(' + recEmTarget + '개월 치)는 충족하나 소득 변동 대비 추가 보강을 권장합니다.';
-                scoreCount += 0.5;
-            } else {
-                emBadge = '미흡 (위험)'; emColor = 'text-rose-700 bg-rose-50 border-rose-200'; emBarColor = 'bg-rose-500';
-                var shortfall = Math.max(0, Math.round(totalLiving * recEmTarget - liquid));
-                emDesc = '권장 기준(' + recEmTarget + '개월) 미달! 최소 ' + shortfall.toLocaleString() + '만 원 추가 유동성(CMA) 확보 시급.';
-            }
-
-            var dsr = income > 0 ? ((loanPmt / income) * 100).toFixed(1) : 0;
-            var dsrBadge, dsrColor, dsrBarColor, dsrDesc;
-            if (dsr <= 25) {
-                dsrBadge = '양호 (안전)'; dsrColor = 'text-emerald-700 bg-emerald-50 border-emerald-200'; dsrBarColor = 'bg-emerald-500';
-                dsrDesc = '소득 대비 원리금 상환 부담이 낮아 현금흐름이 매우 건전합니다.';
-                scoreCount++;
-            } else if (dsr <= 30) {
-                dsrBadge = '적정 (휴직주의)'; dsrColor = 'text-amber-700 bg-amber-50 border-amber-200'; dsrBarColor = 'bg-amber-500';
-                dsrDesc = '현재 권장치(30% 이하) 내이나, 소득 감소 시 위험 구간 진입 우려가 있습니다.';
-                scoreCount += 0.5;
-            } else if (dsr <= 40) {
-                dsrBadge = '주의 (경고)'; dsrColor = 'text-amber-700 bg-amber-50 border-amber-200'; dsrBarColor = 'bg-amber-500';
-                dsrDesc = 'AFPK 권장치(30%)를 초과하여 저축 및 가처분소득이 위축되고 있습니다.';
-            } else {
-                dsrBadge = '과다 (고위험)'; dsrColor = 'text-rose-700 bg-rose-50 border-rose-200'; dsrBarColor = 'bg-rose-500';
-                dsrDesc = '소득의 40% 이상이 부채 상환에 쓰이는 현금흐름 경색 단계입니다.';
-            }
-
-            var saveRatio = income > 0 ? ((monthlySavings / income) * 100).toFixed(1) : 0;
-            var saveBadge, saveColor, saveBarColor, saveDesc;
-            if (parseFloat(saveRatio) >= recSaveMin) {
-                saveBadge = '우수 (양호)'; saveColor = 'text-emerald-700 bg-emerald-50 border-emerald-200'; saveBarColor = 'bg-emerald-500';
-                saveDesc = '[' + hhLabel + '] 기준 권장 저축률(' + recSaveMin + '% 이상)을 달성하고 있습니다.';
-                scoreCount++;
-            } else if (parseFloat(saveRatio) >= recSaveMin * 0.7) {
-                saveBadge = '보통 (개선필요)'; saveColor = 'text-amber-700 bg-amber-50 border-amber-200'; saveBarColor = 'bg-amber-500';
-                saveDesc = '[' + hhLabel + '] 권장치(' + recSaveMin + '%) 대비 다소 부족합니다. 변동비 점검을 권장합니다.';
-                scoreCount += 0.5;
-            } else {
-                saveBadge = '미흡 (누수심각)'; saveColor = 'text-rose-700 bg-rose-50 border-rose-200'; saveBarColor = 'bg-rose-500';
-                saveDesc = '권장 저축률(' + recSaveMin + '%)에 미달합니다! 월 변동비(' + variable + '만) 지출 통제가 필수입니다.';
-            }
-
-            var reRatio = ((realEstate / totalAsset) * 100).toFixed(1);
-            var finRatio = (100 - reRatio).toFixed(1);
-            var reBadge, reColor, reBarColor, reDesc;
-            if (reRatio <= 70) {
-                reBadge = '균형 (양호)'; reColor = 'text-emerald-700 bg-emerald-50 border-emerald-200'; reBarColor = 'bg-emerald-500';
-                reDesc = '부동산 ' + reRatio + '% : 금융 ' + finRatio + '%로 유동성과 자산배분이 균형적입니다.';
-                scoreCount++;
-            } else {
-                reBadge = '불균형 (부동산편중)'; reColor = 'text-rose-700 bg-rose-50 border-rose-200'; reBarColor = 'bg-rose-500';
-                reDesc = '부동산 ' + reRatio + '% vs 금융 ' + finRatio + '%. 실물자산 과편중으로 유동성 쇼크에 취약합니다.';
-            }
-
-            var overallBadge = document.getElementById('t1-overall-badge');
-            if (scoreCount >= 3.5) {
-                overallBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
-                overallBadge.innerText = '종합등급: 우수 (재무건전성 양호)';
-            } else if (scoreCount >= 2) {
-                overallBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800';
-                overallBadge.innerText = '종합등급: 보통 (일부 지표 개선 필요)';
-            } else {
-                overallBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800';
-                overallBadge.innerText = '종합등급: 주의 (현금흐름 구조조정 시급)';
-            }
-
-            document.getElementById('t1-metrics-grid').innerHTML =
-                '<div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">' +
-                    '<div>' +
-                        '<div class="flex justify-between items-start mb-2">' +
-                            '<span class="text-xs font-bold text-slate-500">① 비상예비자금 지표</span>' +
-                            '<span class="text-[11px] font-bold px-2 py-0.5 rounded border ' + emColor + '">' + emBadge + '</span>' +
-                        '</div>' +
-                        '<div class="text-2xl font-extrabold text-slate-900">' + emMonths + '개월 치 <span class="text-xs font-normal text-slate-500">(권장: ' + recEmTarget + '개월↑)</span></div>' +
-                        '<div class="w-full bg-slate-200 h-2 rounded-full mt-2.5 overflow-hidden">' +
-                            '<div class="' + emBarColor + ' h-full rounded-full" style="width: ' + Math.min(100, (emMonths/Math.max(1, recEmTarget*1.5))*100) + '%"></div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<p class="text-xs text-slate-600 mt-2.5 leading-snug">' + emDesc + '</p>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">' +
-                    '<div>' +
-                        '<div class="flex justify-between items-start mb-2">' +
-                            '<span class="text-xs font-bold text-slate-500">② 부채부담 지표 (DSR)</span>' +
-                            '<span class="text-[11px] font-bold px-2 py-0.5 rounded border ' + dsrColor + '">' + dsrBadge + '</span>' +
-                        '</div>' +
-                        '<div class="text-2xl font-extrabold text-slate-900">' + dsr + '% <span class="text-xs font-normal text-slate-500">(권장: 30% 이하)</span></div>' +
-                        '<div class="w-full bg-slate-200 h-2 rounded-full mt-2.5 overflow-hidden">' +
-                            '<div class="' + dsrBarColor + ' h-full rounded-full" style="width: ' + Math.min(100, dsr * 2) + '%"></div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<p class="text-xs text-slate-600 mt-2.5 leading-snug">' + dsrDesc + '</p>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">' +
-                    '<div>' +
-                        '<div class="flex justify-between items-start mb-2">' +
-                            '<span class="text-xs font-bold text-slate-500">③ 총저축성향 (' + hhLabel + ')</span>' +
-                            '<span class="text-[11px] font-bold px-2 py-0.5 rounded border ' + saveColor + '">' + saveBadge + '</span>' +
-                        '</div>' +
-                        '<div class="text-2xl font-extrabold text-slate-900">' + saveRatio + '% <span class="text-xs font-normal text-slate-500">(권장: ' + recSaveMin + '% 이상)</span></div>' +
-                        '<div class="w-full bg-slate-200 h-2 rounded-full mt-2.5 overflow-hidden">' +
-                            '<div class="' + saveBarColor + ' h-full rounded-full" style="width: ' + Math.min(100, (saveRatio/Math.max(1, recSaveMin))*100) + '%"></div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<p class="text-xs text-slate-600 mt-2.5 leading-snug">' + saveDesc + '</p>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">' +
-                    '<div>' +
-                        '<div class="flex justify-between items-start mb-2">' +
-                            '<span class="text-xs font-bold text-slate-500">④ 실물·금융 자산배분</span>' +
-                            '<span class="text-[11px] font-bold px-2 py-0.5 rounded border ' + reColor + '">' + reBadge + '</span>' +
-                        '</div>' +
-                        '<div class="text-2xl font-extrabold text-slate-900">부동산 ' + reRatio + '% <span class="text-xs font-normal text-slate-500">(권장: 70% 이하)</span></div>' +
-                        '<div class="w-full bg-slate-200 h-2 rounded-full mt-2.5 overflow-hidden">' +
-                            '<div class="' + reBarColor + ' h-full rounded-full" style="width: ' + Math.min(100, reRatio) + '%"></div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<p class="text-xs text-slate-600 mt-2.5 leading-snug">' + reDesc + '</p>' +
-                '</div>';
-
-            document.getElementById('t1-networth').innerText = netWorth.toLocaleString() + '만 원';
-            document.getElementById('t1-equity-ratio').innerText = equityRatio + '%';
-            document.getElementById('t1-cashflow-summary').innerHTML =
-                '고정+대출 <strong>' + (fixed+loanPmt).toLocaleString() + '만</strong> (' + (income>0?(((fixed+loanPmt)/income)*100).toFixed(1):0) + '%) · ' +
-                '변동비 <strong>' + variable.toLocaleString() + '만</strong> (' + (income>0?((variable/income)*100).toFixed(1):0) + '%) · ' +
-                '저축여력 <strong>' + monthlySavings.toLocaleString() + '만</strong> (' + saveRatio + '%)';
-
-            document.getElementById('t1-pb-comment').innerHTML =
-                '<p>• <strong>가구 맞춤 진단 (' + hhLabel + '):</strong> 월 소득 ' + income.toLocaleString() + '만 원 중 고정·대출(' + (fixed+loanPmt) + '만)과 변동비(' + variable + '만)를 제외한 월 저축 가능액은 <strong>' + monthlySavings.toLocaleString() + '만 원(' + saveRatio + '%)</strong>입니다. (현재 설정 목표: ' + recSaveMin + '%)</p>' +
-                '<p>• <strong>유동성 & 자산배분:</strong> 비상예비자금은 월 필수지출 대비 <strong>' + emMonths + '개월 치(' + liquid.toLocaleString() + '만 원)</strong>이며, 총자산 중 금융자산 비중은 <strong>' + finRatio + '%</strong>입니다.</p>' +
-                '<p class="text-emerald-700 font-semibold cursor-pointer hover:underline" onclick="window.filterPolicyByMyProfile()">👉 [여기를 클릭]하여 \'' + hhLabel + '\' 가구가 신청 가능한 정부 지원금·특례대출(STEP 06)을 바로 확인해 보세요.</p>';
-
-            if (typeof Chart !== 'undefined') {
-                if (healthChartInstance) healthChartInstance.destroy();
-                var ctx = document.getElementById('healthCashflowChart').getContext('2d');
-                healthChartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['대출 원리금', '필수 고정비', '변동 생활비', '저축·투자 여력'],
-                        datasets: [{
-                            data: [loanPmt, fixed, variable, monthlySavings],
-                            backgroundColor: ['#e11d48', '#64748b', '#f59e0b', '#2563eb'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '65%',
-                        plugins: {
-                            legend: { position: 'right', labels: { boxWidth: 10, font: { size: 11 } } }
-                        }
-                    }
-                });
-            }
-        };
-
-        // STEP 02 스트레스 테스트 엔진
-        window.applyEventPreset = function() {
-            var ev = document.getElementById('t2-event-type').value;
-            var curInc = parseFloat(document.getElementById('t1-income').value) || 450;
-            var curExp = (parseFloat(document.getElementById('t1-loan-pmt').value) || 80) +
-                           (parseFloat(document.getElementById('t1-fixed').value) || 70) +
-                           (parseFloat(document.getElementById('t1-variable').value) || 140);
-            var curBuf = parseFloat(document.getElementById('t1-liquid').value) || 1200;
-
-            document.getElementById('t2-current-income').value = curInc;
-            document.getElementById('t2-expenses').value = curExp;
-            document.getElementById('t2-current-buffer').value = curBuf;
-
-            if (ev === 'job_change') {
-                document.getElementById('t2-new-income').value = Math.round(curInc * 0.5);
-                document.getElementById('t2-extra-exp').value = 0;
-                document.getElementById('t2-duration').value = 6;
-                document.getElementById('t2-expense-cut').value = 35;
-            } else if (ev === 'rate_hike') {
-                document.getElementById('t2-new-income').value = curInc;
-                document.getElementById('t2-extra-exp').value = 60;
-                document.getElementById('t2-duration').value = 18;
-                document.getElementById('t2-expense-cut').value = 45;
-            } else if (ev === 'parental') {
-                document.getElementById('t2-new-income').value = Math.round(curInc * 0.68);
-                document.getElementById('t2-extra-exp').value = 45;
-                document.getElementById('t2-duration').value = 12;
-                document.getElementById('t2-expense-cut').value = 75;
-            } else if (ev === 'retire') {
-                document.getElementById('t2-new-income').value = Math.round(curInc * 0.35);
-                document.getElementById('t2-extra-exp').value = 10;
-                document.getElementById('t2-duration').value = 24;
-                document.getElementById('t2-expense-cut').value = 80;
-            }
-            document.getElementById('t2-cut-label').innerText = '월 ' + document.getElementById('t2-expense-cut').value + '만 원 절감';
-            window.calculateStress();
-        };
-
-        window.calculateStress = function() {
-            var curInc = parseFloat(document.getElementById('t2-current-income').value) || 0;
-            var newInc = parseFloat(document.getElementById('t2-new-income').value) || 0;
-            var exp = parseFloat(document.getElementById('t2-expenses').value) || 0;
-            var extraExp = parseFloat(document.getElementById('t2-extra-exp').value) || 0;
-            var duration = parseInt(document.getElementById('t2-duration').value) || 12;
-            var buffer = parseFloat(document.getElementById('t2-current-buffer').value) || 0;
-            var cut = parseFloat(document.getElementById('t2-expense-cut').value) || 0;
-
-            var totalEventExp = exp + extraExp;
-            var monthlyDeficitBefore = newInc - totalEventExp;
-            var monthlyDeficitAfter = newInc - (totalEventExp - cut);
-
-            var totalShortfallBefore = monthlyDeficitBefore < 0 ? Math.abs(monthlyDeficitBefore) * duration : 0;
-            var totalShortfallAfter = monthlyDeficitAfter < 0 ? Math.abs(monthlyDeficitAfter) * duration : 0;
-            var endBufferBefore = buffer + (monthlyDeficitBefore * duration);
-            var endBufferAfter = buffer + (monthlyDeficitAfter * duration);
-
-            document.getElementById('t2-kpi-cards').innerHTML =
-                '<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">' +
-                    '<div class="text-xs font-bold text-slate-400 mb-1">기존 지출 유지 시 월 수지차</div>' +
-                    '<div class="text-xl font-extrabold ' + (monthlyDeficitBefore < 0 ? 'text-rose-600' : 'text-emerald-600') + '">' +
-                        (monthlyDeficitBefore >= 0 ? '+' : '') + monthlyDeficitBefore.toLocaleString() + '만 원/월' +
-                    '</div>' +
-                    '<div class="text-[11px] text-slate-500 mt-1">' + duration + '개월 누적 적자: ' + totalShortfallBefore.toLocaleString() + '만 원</div>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl bg-white border border-blue-200 shadow-sm">' +
-                    '<div class="text-xs font-bold text-blue-600 mb-1">지출 다이어트(' + cut + '만) 실행 후</div>' +
-                    '<div class="text-xl font-extrabold ' + (monthlyDeficitAfter < 0 ? 'text-amber-600' : 'text-blue-700') + '">' +
-                        (monthlyDeficitAfter >= 0 ? '+' : '') + monthlyDeficitAfter.toLocaleString() + '만 원/월' +
-                    '</div>' +
-                    '<div class="text-[11px] text-slate-500 mt-1">' + duration + '개월 누적 적자: ' + totalShortfallAfter.toLocaleString() + '만 원</div>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">' +
-                    '<div class="text-xs font-bold text-slate-400 mb-1">' + duration + '개월 후 비상금 예상 잔액</div>' +
-                    '<div class="text-xl font-extrabold ' + (endBufferAfter >= 0 ? 'text-emerald-700' : 'text-rose-600') + '">' +
-                        endBufferAfter.toLocaleString() + '만 원' +
-                    '</div>' +
-                    '<div class="text-[11px] text-slate-500 mt-1">미조정 시 잔액: ' + endBufferBefore.toLocaleString() + '만 원</div>' +
-                '</div>';
-
-            var labels = [];
-            var dataBefore = [];
-            var dataAfter = [];
-            for (var m = 0; m <= duration; m++) {
-                labels.push(m === 0 ? '현재' : m + '개월');
-                dataBefore.push(Math.round(buffer + monthlyDeficitBefore * m));
-                dataAfter.push(Math.round(buffer + monthlyDeficitAfter * m));
-            }
-
-            if (typeof Chart !== 'undefined') {
-                if (stressChartInstance) stressChartInstance.destroy();
-                var ctx = document.getElementById('stressChart').getContext('2d');
-                stressChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: '기존 지출 유지 시 비상금 잔액',
-                                data: dataBefore,
-                                borderColor: '#e11d48',
-                                backgroundColor: 'rgba(225, 29, 72, 0.08)',
-                                borderDash: [5, 5],
-                                tension: 0.2,
-                                fill: true
-                            },
-                            {
-                                label: '지출 구조조정(월 ' + cut + '만 절감) 실행 시',
-                                data: dataAfter,
-                                borderColor: '#1d4ed8',
-                                backgroundColor: 'rgba(29, 78, 216, 0.1)',
-                                borderWidth: 2.5,
-                                tension: 0.2,
-                                fill: true
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
-                        scales: {
-                            y: { ticks: { callback: function(v) { return v.toLocaleString() + '만'; } } }
-                        }
-                    }
-                });
-            }
-
-            var safeSurplus = Math.max(0, curInc - exp + cut);
-            document.getElementById('t2-prescription').innerHTML =
-                '<h4 class="text-sm font-bold text-slate-800 mb-3"><i class="fa-solid fa-wallet text-blue-600 mr-1.5"></i>위기 극복을 위한 AFPK 4통장 쪼개기 예산 처방전</h4>' +
-                '<div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">' +
-                    '<div class="p-3 rounded-lg bg-slate-50 border border-slate-200">' +
-                        '<div class="font-bold text-slate-700 mb-1">① 급여통장 (집결지)</div>' +
-                        '<div class="text-slate-600">월 소득 <strong>' + curInc.toLocaleString() + '만 원</strong> 수령 후 급여일 직후 3개 통장으로 자동이체 분리</div>' +
-                    '</div>' +
-                    '<div class="p-3 rounded-lg bg-rose-50/60 border border-rose-200">' +
-                        '<div class="font-bold text-rose-800 mb-1">② 고정지출 통장</div>' +
-                        '<div class="text-slate-600">주담대 원리금·보험·관리비 격리 (보장성 보험 리모델링으로 고정비 다이어트)</div>' +
-                    '</div>' +
-                    '<div class="p-3 rounded-lg bg-amber-50/60 border border-amber-200">' +
-                        '<div class="font-bold text-amber-800 mb-1">③ 변동생활비 통장</div>' +
-                        '<div class="text-slate-600">체크카드 연결 및 월 <strong>' + cut.toLocaleString() + '만 원</strong> 지출 다이어트로 신용카드 할부 차단</div>' +
-                    '</div>' +
-                    '<div class="p-3 rounded-lg bg-emerald-50/60 border border-emerald-200">' +
-                        '<div class="font-bold text-emerald-800 mb-1">④ 예비·투자 통장 (CMA)</div>' +
-                        '<div class="text-slate-600">확보된 월 흑자 <strong>' + safeSurplus.toLocaleString() + '만 원</strong>으로 소득절벽 완충펀드 및 ISA 적립</div>' +
-                    '</div>' +
-                '</div>';
-        };
-
-        // STEP 03 대출상환 vs 투자(BEP) 비교 엔진
-        window.applyPortfolioPreset = function(skipCalc) {
-            var preset = document.getElementById('t3-portfolio-preset').value;
-            var rateInput = document.getElementById('t3-inv-rate');
-            var descBox = document.getElementById('t3-portfolio-desc');
-
-            if (preset === 'stable') {
-                rateInput.value = 4.0;
-                descBox.innerHTML = '<div class="font-bold text-slate-800">🛡️ 안정형 포트폴리오 (기대수익 연 4.0%)</div><p class="text-slate-600">국고채·단기채권 ETF 70% + 고배당주 ETF 30% 구성으로 원금 변동성을 최소화합니다.</p>';
-            } else if (preset === 'balanced') {
-                rateInput.value = 5.2;
-                descBox.innerHTML = '<div class="font-bold text-blue-900">⚖️ 중립·배당형 포트폴리오 (가중평균 연 5.2%)</div><p class="text-slate-600">한국·미국 배당성장 ETF 60%(연 6.2%) + 우량 채권형 ETF 40%(연 3.7%)를 결합한 부부 절충형 표준 자산배분입니다.</p>';
-            } else if (preset === 'growth') {
-                rateInput.value = 7.5;
-                descBox.innerHTML = '<div class="font-bold text-emerald-900">🚀 적극투자형 포트폴리오 (기대수익 연 7.5%)</div><p class="text-slate-600">S&P500·나스닥100 지수 추종 ETF 80% + 채권 20% 구성으로 장기 복리 성장을 추구합니다.</p>';
-            } else {
-                descBox.innerHTML = '<div class="font-bold text-slate-800">✏️ 사용자 직접 설정 포트폴리오</div><p class="text-slate-600">입력하신 기대 투자 수익률(연 ' + rateInput.value + '%)과 대출금리를 직접 비교합니다.</p>';
-            }
-
-            if (!skipCalc) window.calculateBEP();
-        };
-
-        window.calculateBEP = function() {
-            var pmt = parseFloat(document.getElementById('t3-pmt').value) || 100;
-            var loanRate = parseFloat(document.getElementById('t3-loan-rate').value) || 4.3;
-            var invRate = parseFloat(document.getElementById('t3-inv-rate').value) || 5.2;
-            var years = parseInt(document.getElementById('t3-years').value) || 10;
-            var taxMode = document.getElementById('t3-tax-mode').value;
-
-            var taxFreeLimit = 200;
-            var excessTaxRate = 0.099;
-            if (taxMode === 'isa_common') { taxFreeLimit = 400; excessTaxRate = 0.099; }
-            else if (taxMode === 'isa_couple') { taxFreeLimit = 400; excessTaxRate = 0.099; }
-            else if (taxMode === 'normal') { taxFreeLimit = 0; excessTaxRate = 0.154; }
-
-            var rLoanMonthly = (loanRate / 100) / 12;
-            var rInvMonthly = (invRate / 100) / 12;
-
-            var labels = [];
-            var loanSavedArr = [];
-            var invNetProfitArr = [];
-            var tableRows = '';
-
-            for (var y = 1; y <= years; y++) {
-                var n = y * 12;
-                var principal = pmt * n;
-
-                var fvLoan = rLoanMonthly > 0 ? pmt * ((Math.pow(1 + rLoanMonthly, n) - 1) / rLoanMonthly) * (1 + rLoanMonthly) : principal;
-                var savedInterest = fvLoan - principal;
-
-                var fvInv = rInvMonthly > 0 ? pmt * ((Math.pow(1 + rInvMonthly, n) - 1) / rInvMonthly) * (1 + rInvMonthly) : principal;
-                var grossProfit = fvInv - principal;
-
-                var tax = 0;
-                if (grossProfit > taxFreeLimit) {
-                    tax = (grossProfit - taxFreeLimit) * excessTaxRate;
-                }
-                var netProfit = grossProfit - tax;
-                var diff = netProfit - savedInterest;
-
-                labels.push(y + '년차');
-                loanSavedArr.push(Math.round(savedInterest));
-                invNetProfitArr.push(Math.round(netProfit));
-
-                var winnerBadge = diff >= 0
-                    ? '<span class="text-blue-700 font-bold">투자 우위 (+' + Math.round(diff).toLocaleString() + '만)</span>'
-                    : '<span class="text-rose-700 font-bold">상환 우위 (+' + Math.round(Math.abs(diff)).toLocaleString() + '만)</span>';
-
-                tableRows += '<tr class="hover:bg-slate-50">' +
-                    '<td class="py-2 px-4 text-left font-bold text-slate-700">' + y + '년 (' + n + '개월)</td>' +
-                    '<td class="py-2 px-4">' + principal.toLocaleString() + '만</td>' +
-                    '<td class="py-2 px-4 text-rose-700 font-semibold">+' + Math.round(savedInterest).toLocaleString() + '만</td>' +
-                    '<td class="py-2 px-4 text-blue-700 font-semibold">+' + Math.round(netProfit).toLocaleString() + '만</td>' +
-                    '<td class="py-2 px-4">' + winnerBadge + '</td>' +
-                '</tr>';
-            }
-
-            document.getElementById('t3-table-body').innerHTML = tableRows;
-
-            var finalSaved = loanSavedArr[loanSavedArr.length - 1];
-            var finalNetInv = invNetProfitArr[invNetProfitArr.length - 1];
-            var finalDiff = finalNetInv - finalSaved;
-            var effectiveBepRate = taxMode === 'normal' ? (loanRate / (1 - 0.154)).toFixed(2) : loanRate.toFixed(2);
-
-            document.getElementById('t3-summary-cards').innerHTML =
-                '<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">' +
-                    '<div class="text-xs font-bold text-slate-400 mb-1">손익분기점(BEP) 요구수익률</div>' +
-                    '<div class="text-xl font-extrabold text-slate-900">연 ' + effectiveBepRate + '%</div>' +
-                    '<div class="text-[11px] text-slate-500 mt-1">대출금리 ' + loanRate + '% 극복을 위한 세전 수익률</div>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">' +
-                    '<div class="text-xs font-bold text-slate-400 mb-1">' + years + '년 누적 대출이자 절감액</div>' +
-                    '<div class="text-xl font-extrabold text-rose-600">+' + finalSaved.toLocaleString() + '만 원</div>' +
-                    '<div class="text-[11px] text-slate-500 mt-1">원금 ' + (pmt*12*years).toLocaleString() + '만 원 상환 시 확정절감</div>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl bg-white border border-blue-200 shadow-sm">' +
-                    '<div class="text-xs font-bold text-blue-600 mb-1">' + years + '년 투자 세후 순수익 (격차)</div>' +
-                    '<div class="text-xl font-extrabold text-blue-700">+' + finalNetInv.toLocaleString() + '만 원</div>' +
-                    '<div class="text-[11px] font-bold ' + (finalDiff >= 0 ? 'text-emerald-600' : 'text-rose-600') + ' mt-1">' +
-                        (finalDiff >= 0 ? '투자 시 +' + finalDiff.toLocaleString() + '만 원 추가 이득' : '대출상환이 +' + Math.abs(finalDiff).toLocaleString() + '만 원 더 유리') +
-                    '</div>' +
-                '</div>';
-
-            if (typeof Chart !== 'undefined') {
-                if (bepChartInstance) bepChartInstance.destroy();
-                var ctx = document.getElementById('bepChart').getContext('2d');
-                bepChartInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: '① 대출 원금 상환 시 누적 이자절감액',
-                                data: loanSavedArr,
-                                backgroundColor: '#f43f5e',
-                                borderRadius: 4
-                            },
-                            {
-                                label: '② ISA/ETF 투자 시 세후 누적 순수익',
-                                data: invNetProfitArr,
-                                backgroundColor: '#2563eb',
-                                borderRadius: 4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
-                        scales: { y: { ticks: { callback: function(v) { return v.toLocaleString() + '만'; } } } }
-                    }
-                });
-            }
-        };
-
-        // STEP 04 절세 설계 엔진
-        window.toggleSpouseInput = function() {
-            var mode = document.getElementById('t4-family-mode').value;
-            var spouseBox = document.getElementById('t4-spouse-box');
-            var leaveBox = document.getElementById('t4-leave-box');
-            var customTaxBox = document.getElementById('t4-custom-tax-box');
-
-            if (mode === 'custom_tax') {
-                customTaxBox.style.display = 'block';
-            } else {
-                customTaxBox.style.display = 'none';
-            }
-
-            if (mode === 'parental_leave_couple') {
-                document.getElementById('t4-leave-check').checked = true;
-            }
-
-            var hasSpouse = (mode === 'couple' || mode === 'parental_leave_couple' || mode === 'single_earner_married' ||
-                              (mode === 'custom_tax' && document.getElementById('t4-custom-has-spouse').checked));
-
-            spouseBox.style.opacity = hasSpouse ? '1' : '0.4';
-            document.getElementById('t4-salary-w').disabled = !hasSpouse;
-            leaveBox.style.display = hasSpouse ? 'block' : 'none';
-        };
-
-        window.calculateTax = function() {
-            var mode = document.getElementById('t4-family-mode').value;
-            var salH = parseFloat(document.getElementById('t4-salary-h').value) || 0;
-            var salW = parseFloat(document.getElementById('t4-salary-w').value) || 0;
-            var leaveCheck = document.getElementById('t4-leave-check').checked;
-            var penMonthly = parseFloat(document.getElementById('t4-pension-monthly').value) || 0;
-            var irpMonthly = parseFloat(document.getElementById('t4-irp-monthly').value) || 0;
-
-            var annualTotalDeposit = (penMonthly + irpMonthly) * 12;
-            var recognizeAmount = Math.min(900, annualTotalDeposit);
-
-            var threshold = (mode === 'freelancer_biz') ? 4500 : 5500;
-            var rateH = salH <= threshold ? 0.165 : 0.132;
-            var rateW = salW <= threshold ? 0.165 : 0.132;
-
-            var refundH = Math.round(recognizeAmount * rateH * 10) / 10;
-            var refundW = Math.round(recognizeAmount * rateW * 10) / 10;
-            if (leaveCheck) {
-                refundW = Math.round(refundW * 0.25 * 10) / 10;
-            }
-
-            var modeTitle = '맞벌이 부부 최적 명의 비교';
-            var strategyAdvice = '';
-
-            if (mode === 'single_worker') {
-                modeTitle = '1인 가구 · 단독 근로소득자 절세 진단';
-                strategyAdvice = '현재 총급여 <strong>' + salH.toLocaleString() + '만 원</strong>으로 <strong>' + (rateH*100).toFixed(1) + '%</strong> 세액공제율이 적용됩니다. 연간 <strong>' + annualTotalDeposit.toLocaleString() + '만 원</strong>(공제인정 ' + recognizeAmount + '만 원) 납입 시 연말정산에서 <strong>약 ' + refundH + '만 원</strong>을 환급받습니다.';
-            } else if (mode === 'single_earner_married') {
-                modeTitle = '외벌이 부부 절세 & 부부 ISA 분산 전략';
-                strategyAdvice = '외벌이 가구는 연금저축·IRP 세액공제를 주 소득자(본인, 공제율 ' + (rateH*100).toFixed(1) + '%) 명의로 집중하여 <strong>연 ' + refundH + '만 원</strong>을 환급받고, 소득이 없는 배우자 명의로는 <strong>중개형 ISA(비과세 200~400만 한도)</strong>를 개설해 금융자산 비과세 한도를 2배로 넓히는 것이 핵심입니다.';
-            } else if (mode === 'freelancer_biz') {
-                modeTitle = '개인사업자 · 프리랜서 종합소득세 절세 전략';
-                strategyAdvice = '프리랜서·개인사업자는 종합소득금액 4,500만 원 이하 시 16.5%, 초과 시 13.2% 공제율이 적용됩니다(예상 환급액 <strong>연 ' + refundH + '만 원</strong>). 추가로 <strong>노란우산공제(연 최대 500만 소득공제)</strong>를 병행하면 5월 종합소득세 과세표준 자체를 크게 낮출 수 있습니다.';
-            } else if (mode === 'high_fin_income') {
-                modeTitle = '금융소득종합과세(연 2,000만 초과) 방어 전략';
-                strategyAdvice = '이자·배당소득이 연 2,000만 원을 초과하면 최고 49.5% 누진세율과 건강보험료 부과 대상이 됩니다. 일반 계좌의 배당주·예금을 <strong>중개형 ISA(9.9% 분리과세)</strong>와 <strong>연금저축·IRP(과세이연 후 3.3~5.5% 연금소득세)</strong>로 즉시 이전하여 종합과세 합산 대상에서 제외시키세요.';
-            } else if (mode === 'retire_pensioner') {
-                modeTitle = '은퇴 준비 · 퇴직금 수령 및 연금 개시 절세 전략';
-                strategyAdvice = '퇴직금을 일시금 대신 <strong>개인형 IRP로 이체하여 만 55세 이후 연금으로 수령</strong>하면 퇴직소득세를 <strong>30~40% 감면</strong>받습니다. 단, 사적연금(연금저축+IRP 수익분) 수령액이 <strong>연 1,500만 원 이하</strong>가 되도록 인출 기간을 조절해야 16.5% 분리과세(또는 종합과세)를 피하고 3.3~5.5% 저율과세를 적용받습니다.';
-            } else if (mode === 'custom_tax') {
-                var customDesc = document.getElementById('t4-custom-tax-desc').value.trim() || '기타 사용자 정의 과세 상황';
-                modeTitle = '[맞춤 진단] ' + customDesc;
-                strategyAdvice = '입력하신 상황(<strong>' + customDesc + '</strong>) 및 소득(' + salH.toLocaleString() + '만 원) 기준 적용 세액공제율은 <strong>' + (rateH*100).toFixed(1) + '%</strong>이며, 연간 <strong>' + recognizeAmount + '만 원</strong> 공제 인정 시 예상 환급액은 <strong>' + refundH + '만 원</strong>입니다. 연도 중 소득 변동이나 휴직이 있다면 결정세액(낼 세금) 범위 내에서만 납입액을 조절하세요.';
-            } else {
-                if (leaveCheck) {
-                    strategyAdvice = '⚠️ <strong>[육아·질병휴직 결정세액 부족 경보]</strong> 명목상으로는 배우자(' + salW + '만, ' + (rateW*100).toFixed(1) + '%)의 세액공제율이 높아 보이지만, <strong>휴직 연도에는 육아휴직 급여가 비과세이므로 배우자의 결정세액(낼 세금)이 0원에 가까워져 환급 누락(실효 환급 약 ' + refundW + '만)</strong>이 발생합니다! 따라서 휴직기에는 소득이 유지되는 <strong>본인(' + salH + '만, ' + (rateH*100).toFixed(1) + '%) 명의로 연금·IRP를 집중 납입</strong>하여 <strong>연 ' + refundH + '만 원</strong>을 확실하게 환급받아야 합니다.';
-                } else if (rateW > rateH) {
-                    strategyAdvice = '배우자의 총급여(' + salW.toLocaleString() + '만 원)가 5,500만 원 이하 구간이므로 배우자 명의로 납입 시 <strong>16.5%(연 ' + refundW + '만 원 환급)</strong>가 적용되어, 본인 명의(13.2%, 연 ' + refundH + '만 원)보다 <strong>매년 ' + (refundW - refundH).toLocaleString() + '만 원 더 많은 세금을 환급</strong>받습니다.';
-                } else {
-                    strategyAdvice = '본인과 배우자 중 소득 구간 및 결정세액 여력이 충분한 쪽으로 연 900만 원 한도를 우선 채우시고(예상 환급액: 본인 <strong>' + refundH + '만 원</strong> / 배우자 <strong>' + refundW + '만 원</strong>), 여유 자금은 부부 각자 명의로 합산 연 1,800만 원까지 세액공제 확대가 가능합니다.';
-                }
-            }
-
-            document.getElementById('t4-result-box').innerHTML =
-                '<div class="flex flex-wrap justify-between items-center pb-3 mb-4 border-b border-slate-100 gap-2">' +
-                    '<h4 class="text-base font-bold text-slate-900"><i class="fa-solid fa-wand-magic-sparkles text-blue-600 mr-1.5"></i>' + modeTitle + '</h4>' +
-                    '<span class="text-xs font-bold px-2.5 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200">' +
-                        '연간 총 납입액: ' + annualTotalDeposit.toLocaleString() + '만 원 (공제대상 ' + recognizeAmount + '만)' +
-                    '</span>' +
-                '</div>' +
-                '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">' +
-                    '<div class="p-4 rounded-xl border ' + ((!leaveCheck && rateW > rateH) ? 'border-slate-200 bg-slate-50' : 'border-blue-300 bg-blue-50/50') + '">' +
-                        '<div class="text-xs font-bold text-slate-500 mb-1">본인 명의 집중 납입 시 (공제율 ' + (rateH*100).toFixed(1) + '%)</div>' +
-                        '<div class="text-2xl font-extrabold text-blue-700">연 ' + refundH.toLocaleString() + '만 원 환급</div>' +
-                        '<div class="text-[11px] text-slate-500 mt-1">연 소득 ' + salH.toLocaleString() + '만 원 기준 · 정상 공제 가능</div>' +
-                    '</div>' +
-                    '<div class="p-4 rounded-xl border ' + (leaveCheck ? 'border-rose-200 bg-rose-50/40' : 'border-slate-200 bg-slate-50') + '">' +
-                        '<div class="text-xs font-bold text-slate-500 mb-1">배우자 명의 납입 시 (명목 ' + (rateW*100).toFixed(1) + '%)</div>' +
-                        '<div class="text-2xl font-extrabold ' + (leaveCheck ? 'text-rose-600' : 'text-emerald-700') + '">' +
-                            '연 ' + refundW.toLocaleString() + '만 원 ' + (leaveCheck ? '(공제누락 위험!)' : '환급') +
-                        '</div>' +
-                        '<div class="text-[11px] text-slate-500 mt-1">' + (leaveCheck ? '휴직으로 인한 과세급여·결정세액 급감 반영' : '연 소득 ' + salW.toLocaleString() + '만 원 기준') + '</div>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="p-4 rounded-xl bg-slate-800 text-slate-100 text-xs sm:text-sm leading-relaxed">' +
-                    strategyAdvice +
-                '</div>';
-        };
-
-        window.addEventListener('DOMContentLoaded', function() {
-            window.loadPreset('custom');
-            window.renderDictionary();
-            window.renderPolicies();
-        });
-    </script>
-</body>
-</html>
+                                        <input type="number" id="t1-real-estate" value="22000" placeholder="전세보증금/자가" oninput="calculateHealth()" class="input-box w-full border border-slate-300 rounded-lg p-2 pr-10 text-right font-semibold text-slate-700 bg-white">
+                                        <span class="absolute right-3 top-2 text-xs text-slate-400">
